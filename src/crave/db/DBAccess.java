@@ -3,11 +3,16 @@ package crave.db;
 import java.sql.*;
 import java.util.Properties;
 
-/**
- * A program that accesses an SQL Database and executes specific queries.
- * Harry Nelken (hrn10) - EECS 341 - Databases HW #5
- */
 public class DBAccess {
+	
+	private String words = "null";
+	private String type = "null";
+	private String origin = "null";
+	private String price = "null";
+	private String cmp = "null";
+	private String gb = "null";
+	private String ob = "null";
+	private String queryTemplate = "name " + words + " type " + type + " origin " + origin + " price " + price + " cmp " + cmp + " gb " + gb + " ob " + ob;
 	
 	/** The name of the MySQL account to use */
 	private final String userName = "root";
@@ -56,7 +61,7 @@ public class DBAccess {
 				 pw = rs.getString("name");
 			}
 		} catch (SQLException e) {
-			System.out.println("ERROR: Could not execute query 1");
+			System.err.println("ERROR: Could not execute query");
 			e.printStackTrace();
 		} finally {
 			try { if (rs != null) rs.close(); } catch (SQLException e) { e.printStackTrace(); }
@@ -64,6 +69,28 @@ public class DBAccess {
 			System.out.print('\n');
 		}
 		return pw.toCharArray();
+	}
+	
+	/** Executes a general query using the query generator and returns the result set */
+	public ResultSet generalQuery(Connection conn) {
+		System.out.println("Querying database...");
+		Statement stmt = null;
+		ResultSet rs = null;
+		
+		/* Get query from Andrews generator using querytemplate string */
+		String query = "";	// = getQuery(queryTemplate);
+		
+		try {
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+		} catch (SQLException e) {
+			System.err.println("ERROR: Could not execute query");
+			e.printStackTrace();
+		} finally {
+			try { if (stmt != null) stmt.close(); } catch (SQLException e) { e.printStackTrace(); }
+			System.out.print('\n');
+		}
+		return rs;
 	}
 	
 	/**
