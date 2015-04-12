@@ -1,12 +1,10 @@
 USE restaurantsApp;
-/*
-DROP USER appUser@localhost;
-FLUSH PRIVILEGES;
+
 CREATE USER 'appUser'@'localhost' IDENTIFIED BY 'Food216';
 GRANT SELECT ON restaurantsApp.* TO 'appuser'@'localhost';
-GRANT INSERT ON restaurantsApp.* TO appuser@localhost;
-GRANT UPDATE ON restaurantsApp.* TO appuser@localhost;
-GRANT DELETE ON restaurantsApp.* TO appuser@localhost; */
+GRANT INSERT ON restaurantsApp.* TO 'appuser'@'localhost';
+GRANT UPDATE ON restaurantsApp.* TO 'appuser'@'localhost';
+GRANT DELETE ON restaurantsApp.* TO 'appuser'@'localhost';
 
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
@@ -71,13 +69,13 @@ CREATE TABLE origins (
 DROP TABLE IF EXISTS dishOrigin;
 CREATE TABLE dishOrigin (
     dID     INT UNSIGNED NOT NULL,
-    orID    INT UNSIGNED NOT NULL,
+    oID    INT UNSIGNED NOT NULL,
 
-    PRIMARY KEY (dID, orID),
+    PRIMARY KEY (dID, oID),
     FOREIGN KEY (dID) REFERENCES dishes(ID)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
-    FOREIGN KEY (orID) REFERENCES origins(ID)
+    FOREIGN KEY (oID) REFERENCES origins(ID)
         ON UPDATE CASCADE
         ON DELETE CASCADE
 );
@@ -99,13 +97,13 @@ CREATE TABLE dishType (
 DROP TABLE IF EXISTS restaurantOrigin;
 CREATE TABLE restaurantOrigin (
     rID     INT UNSIGNED NOT NULL,
-    orID    INT UNSIGNED NOT NULL,
+    oID    INT UNSIGNED NOT NULL,
 
-    PRIMARY KEY (rID, orID),
+    PRIMARY KEY (rID, oID),
     FOREIGN KEY (rID) REFERENCES restaurants(ID)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
-    FOREIGN KEY (orID) REFERENCES origins(ID)
+    FOREIGN KEY (oID) REFERENCES origins(ID)
         ON UPDATE CASCADE
         ON DELETE CASCADE
 );
