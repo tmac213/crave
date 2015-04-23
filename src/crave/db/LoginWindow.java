@@ -20,11 +20,8 @@ public class LoginWindow extends JFrame implements ActionListener {
 		crave = gui;
 		setTitle("Crave - Cleveland Menu Database");	//frame setup
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		
 		addComponentsToPane();		//add all elements to frame
-
 		setSize(500, 500);		//adjust frame
-
 		setBackground(Color.BLACK);
 		pack();							//make frame visible
 		crave.centerFrame(this);

@@ -4,22 +4,21 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.*;
 
 public class RegWindow extends JFrame implements ActionListener {
 	
 	private CraveGUI crave;
+	private JTextField name;
+	private JTextField user;
+	private JPasswordField pw;
 	
 	public RegWindow(CraveGUI gui) {
 		crave = gui;
 		setTitle("Crave - Cleveland Menu Database");	//frame setup
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		
 		addComponentsToPane();		//add all elements to frame
-
 		setSize(500, 500);		//adjust frame
-
 		pack();							//make frame visible
 		crave.centerFrame(this);
 	    setVisible(true);
@@ -60,6 +59,10 @@ public class RegWindow extends JFrame implements ActionListener {
         register.addActionListener(this);
         back.addActionListener(this);
         back.setActionCommand("back");
+        
+        name = nameText;
+        user = userText;
+        pw = pwText;
         
         /* Create panels */
         JPanel titlePanel = new JPanel();		// panel for title and detail labels
@@ -116,8 +119,56 @@ public class RegWindow extends JFrame implements ActionListener {
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
-		
+	public void actionPerformed(ActionEvent e) {
+		if (e.getActionCommand().equals("back")) {
+			crave.reshowLogin(this);
+		}
+		else {
+			String namearg = name.getText();
+			String username = user.getText();
+			char[] pwInput = pw.getPassword();
+			if (isInputValid(username, pwInput)) {
+				registerUser(namearg, username, pwInput);
+				JOptionPane.showMessageDialog(this, "Congratulations! You're in!");
+				crave.reshowLogin(this);
+	        }
+			else {
+	            JOptionPane.showMessageDialog(this,
+	                "Invalid Credentials:" + '\n' +
+	                "Username: > 5 characters" + '\n' +
+	                "Password: 4-16 alphanumeric characters.",
+	                "Error Message",
+	                JOptionPane.ERROR_MESSAGE);
+	        }
+		}
 	}
+	
+	private void registerUser(String namearg, String username, char[] password) {
+		//use DB to add user insertion
+	}
+	
+	private boolean isInputValid(String username, char[] pwInput) {
+		// Check username
+		if (username.length() <= 5) {
+			return false;
+		}
+		
+		// Check password
+		if (pwInput.length < 4 || pwInput.length > 16) {
+			return false;
+		}
+		for (int i = 0; i < pwInput.length; i++) {
+			if(!isCharValid(pwInput[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	private boolean isCharValid(char c) {
+		return ((c >= 'A' && c <= 'Z') ||
+				(c >= 'a' && c <= 'z') ||
+				(c >= '0' && c <= '9'));
+	}
+
 }

@@ -27,15 +27,20 @@ public class CraveGUI {
     	//conn = db.getConnection();
     	
     	/* Bring up GUI */
-    	showLogin(this);
+    	showLogin();
 
     	/* Disconnect from database */
     	//db.cleanup(conn);
     	
 	}
 	
-	public void showLogin(CraveGUI crave) {
-		new LoginWindow(crave);
+	public void showLogin() {
+		new LoginWindow(this);
+	}
+	
+	public void reshowLogin(JFrame frame) {
+		frame.dispose();
+		new LoginWindow(this);
 	}
 	
 	public void registerUser(LoginWindow log) {
