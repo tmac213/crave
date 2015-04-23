@@ -27,21 +27,34 @@ public class CraveGUI {
     	//conn = db.getConnection();
     	
     	/* Bring up GUI */
-    	createAndShowGUI(this);
+    	showLogin(this);
 
     	/* Disconnect from database */
     	//db.cleanup(conn);
     	
 	}
 	
-	public void createAndShowGUI(CraveGUI crave) {
+	public void showLogin(CraveGUI crave) {
 		new LoginWindow(crave);
+	}
+	
+	public void registerUser(LoginWindow log) {
+		log.dispose();
+		new RegWindow(this);
 	}
 	
 	public void loginSuccess(LoginWindow log) {
 		log.dispose();
-		SearchWindow search = new SearchWindow();
+		new SearchWindow(this);
 	}
+	
+	public void centerFrame(JFrame frame) {
+    	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		Point middle = new Point(screenSize.width / 2, screenSize.height / 2);
+		Point newLocation = new Point(middle.x - (frame.getWidth() / 2), 
+		                              middle.y - (frame.getHeight() / 2));
+		frame.setLocation(newLocation);
+    }
 	
 	public static void main(String[] args) {
         //Schedule a job for the event-dispatching thread:

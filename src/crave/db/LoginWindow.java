@@ -24,10 +24,10 @@ public class LoginWindow extends JFrame implements ActionListener {
 		addComponentsToPane();		//add all elements to frame
 
 		setSize(500, 500);		//adjust frame
-		centerFrame();
 
 		setBackground(Color.BLACK);
 		pack();							//make frame visible
+		crave.centerFrame(this);
 	    setVisible(true);
 	}
 	
@@ -48,14 +48,14 @@ public class LoginWindow extends JFrame implements ActionListener {
 	private void addComponentsToPane() {
         
 		/* Create the components of the login window */
-        JTextField userText = new JTextField();
-        JPasswordField pwText = new JPasswordField();
+        JTextField userText = new JTextField(15);
+        JPasswordField pwText = new JPasswordField(15);
         JLabel titleText = new JLabel("Crave");
         JLabel detailText = new JLabel("Sign in to find the food you're craving!");
         JLabel userLabel = new JLabel("Username:    ");
         JLabel pwLabel = new JLabel("Password:    ");
         JLabel space = new JLabel("          ");
-        JButton reg = new JButton("Register");
+        JButton reg = new JButton("Sign Up");
         JButton login = new JButton("Sign In");
         
         /* Adjust labels */
@@ -101,7 +101,7 @@ public class LoginWindow extends JFrame implements ActionListener {
         titlePanel.add(detailText);
         userPanel.add(userLabel);
         userPanel.add(userText);
-        pwPanel.add(pwLabel);			//add the components to their panels
+        pwPanel.add(pwLabel);
         pwPanel.add(pwText);
         logPanel.add(reg);
         logPanel.add(space);
@@ -119,7 +119,7 @@ public class LoginWindow extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("register")) {
-			//open up registration window
+			crave.registerUser(this);
 		}
 		else {
 			String username = user.getText();

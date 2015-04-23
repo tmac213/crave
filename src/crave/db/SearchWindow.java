@@ -7,13 +7,17 @@ import javax.swing.*;
 
 public class SearchWindow extends JFrame implements ActionListener {
 	
-	public SearchWindow() {
+	public CraveGUI crave;
+	
+	public SearchWindow(CraveGUI gui) {
+		crave = gui;
+		
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		addComponentsToPane();
-		
 		setSize(700,300);
 		pack();
+		crave.centerFrame(this);
 		setVisible(true);
 	}
 	
@@ -26,7 +30,7 @@ public class SearchWindow extends JFrame implements ActionListener {
 		String[] orderByVals = {"Price", "Rating"};
 		
 		/* Create the components of the login window */
-        JTextField dishText = new JTextField();
+        JTextField dishText = new JTextField(15);
         JComboBox types = new JComboBox(typeVals);
         JComboBox origins = new JComboBox(originsVals);
         JComboBox orderBy = new JComboBox(orderByVals);
@@ -58,7 +62,6 @@ public class SearchWindow extends JFrame implements ActionListener {
         /* Adjust text fields */
         Font medFont = dishText.getFont().deriveFont(Font.PLAIN, 15f);
         dishText.setFont(medFont);
-        dishText.setColumns(15);
         dishText.setBorder(BorderFactory.createEmptyBorder(25, 25, 0, 25));
         
         /* Adjust combo boxes */
