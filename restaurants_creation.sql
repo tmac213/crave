@@ -1,5 +1,7 @@
 USE restaurantsApp;
 
+DROP USER 'appUser'@'localhost';
+FLUSH PRIVILEGES;
 CREATE USER 'appUser'@'localhost' IDENTIFIED BY 'Food216';
 GRANT SELECT ON restaurantsApp.* TO 'appuser'@'localhost';
 GRANT INSERT ON restaurantsApp.* TO 'appuser'@'localhost';
@@ -11,8 +13,6 @@ CREATE TABLE users (
 	ID 		INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	name	VARCHAR(45) NOT NULL,
     username    VARCHAR(45) NOT NULL,
-	age 	INT NOT NULL,
-	gender 	CHAR(1) NULL,
 
 	PRIMARY KEY (ID),
     UNIQUE (username)
@@ -167,5 +167,4 @@ CREATE TABLE reviews (
         ON UPDATE CASCADE
         ON DELETE CASCADE
 );
-
 
