@@ -35,7 +35,7 @@ public class RegWindow extends JFrame implements ActionListener {
         JLabel userLabel = new JLabel("Username:    ");
         JLabel userDetail = new JLabel("    (ex. abc123)");
         JLabel pwLabel = new JLabel("Password:    ");
-        JLabel pwDetail = new JLabel("    (4-16 alphanumeric characters)");
+        JLabel pwDetail = new JLabel("    (> 4 alphanumeric)");
         JLabel space = new JLabel("          ");
         JButton back = new JButton("Back");
         JButton register = new JButton("Register!");
@@ -67,27 +67,27 @@ public class RegWindow extends JFrame implements ActionListener {
         /* Create panels */
         JPanel titlePanel = new JPanel();		// panel for title and detail labels
         titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
-        titlePanel.setBorder(BorderFactory.createEmptyBorder(20,100,15,100));
+        titlePanel.setBorder(BorderFactory.createEmptyBorder(20,0,0,0));
         
         JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.X_AXIS));
-        centerPanel.setBorder(BorderFactory.createEmptyBorder(20,100,15,100));
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.X_AXIS));	// to hold the next three panels
+        centerPanel.setBorder(BorderFactory.createEmptyBorder(30,75,0,50));
         
         JPanel labelPanel = new JPanel();		// panel for label related components
         labelPanel.setLayout(new BoxLayout(labelPanel, BoxLayout.Y_AXIS));
-        labelPanel.setBorder(BorderFactory.createEmptyBorder(20,20,15,20));
+        labelPanel.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
         
         JPanel inputPanel = new JPanel();	// panel for input text related components
         inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.Y_AXIS));
-        inputPanel.setBorder(BorderFactory.createEmptyBorder(15,20,15,20));
+        inputPanel.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
         
         JPanel detailPanel = new JPanel();		// panel for detail label related components
         detailPanel.setLayout(new BoxLayout(detailPanel, BoxLayout.Y_AXIS));
-        detailPanel.setBorder(BorderFactory.createEmptyBorder(15,20,15,20));
+        detailPanel.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 
         JPanel buttonPanel = new JPanel();		// panel for register button
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(15,100,20,100));
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(30,0,20,0));
         buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
         
         /* Add components to respective panels */
@@ -129,14 +129,14 @@ public class RegWindow extends JFrame implements ActionListener {
 			char[] pwInput = pw.getPassword();
 			if (isInputValid(username, pwInput)) {
 				registerUser(namearg, username, pwInput);
-				JOptionPane.showMessageDialog(this, "Congratulations! You're in!");
+				JOptionPane.showMessageDialog(this, "Congratulations! You can now log in!");
 				crave.reshowLogin(this);
 	        }
 			else {
 	            JOptionPane.showMessageDialog(this,
-	                "Invalid Credentials:" + '\n' +
-	                "Username: > 5 characters" + '\n' +
-	                "Password: 4-16 alphanumeric characters.",
+	                "           Invalid Credentials:" + '\n' +
+	                "Username must be > 2 letters/numbers" + '\n' +
+	                "Password must be > 3 letters/numbers",
 	                "Error Message",
 	                JOptionPane.ERROR_MESSAGE);
 	        }
@@ -148,27 +148,7 @@ public class RegWindow extends JFrame implements ActionListener {
 	}
 	
 	private boolean isInputValid(String username, char[] pwInput) {
-		// Check username
-		if (username.length() <= 5) {
-			return false;
-		}
-		
-		// Check password
-		if (pwInput.length < 4 || pwInput.length > 16) {
-			return false;
-		}
-		for (int i = 0; i < pwInput.length; i++) {
-			if(!isCharValid(pwInput[i])) {
-				return false;
-			}
-		}
-		return true;
+		// Check username and password length
+		return (username.length() > 2 && pwInput.length > 3);
 	}
-	
-	private boolean isCharValid(char c) {
-		return ((c >= 'A' && c <= 'Z') ||
-				(c >= 'a' && c <= 'z') ||
-				(c >= '0' && c <= '9'));
-	}
-
 }
