@@ -5,15 +5,6 @@ import java.util.Properties;
 
 public class DBAccess {
 	
-	private String words = "null";
-	private String type = "null";
-	private String origin = "null";
-	private String price = "null";
-	private String cmp = "null";
-	private String gb = "null";
-	private String ob = "null";
-	private String queryTemplate = "name " + words + " type " + type + " origin " + origin + " price " + price + " cmp " + cmp + " gb " + gb + " ob " + ob;
-	
 	/** The name of the MySQL account to use */
 	private final String userName = "root";
 
@@ -69,6 +60,14 @@ public class DBAccess {
 			System.out.print('\n');
 		}
 		return pw.toCharArray();
+	}
+	
+	public void insertUser(String name, String username, char[] password, Connection conn) {
+		
+	}
+	
+	public boolean checkUsername(String name, Connection conn) {
+		return false;
 	}
 	
 	/** Executes a general query using the query generator and returns the result set */

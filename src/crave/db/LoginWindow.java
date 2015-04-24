@@ -119,8 +119,6 @@ public class LoginWindow extends JFrame implements ActionListener {
 			crave.registerUser(this);
 		}
 		else {
-			String username = user.getText();
-			char[] pwInput = pass.getPassword();
 			if (isPasswordCorrect()) {
 				crave.loginSuccess(this);
 	        } 

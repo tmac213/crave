@@ -120,21 +120,30 @@ public class RegWindow extends JFrame implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals("back")) {
+		if (e.getActionCommand().equals("back")) {	//back button got pressed
 			crave.reshowLogin(this);
 		}
-		else {
+		else {									//register button got pressed
 			String namearg = name.getText();
 			String username = user.getText();
 			char[] pwInput = pw.getPassword();
-			if (isInputValid(username, pwInput)) {
-				registerUser(namearg, username, pwInput);
-				JOptionPane.showMessageDialog(this, "Congratulations! You can now log in!");
-				crave.reshowLogin(this);
+			if (isInputValid(username, pwInput)) {	//check credential validity
+				if (isUsernameValid(username)) {
+					registerUser(namearg, username, pwInput);
+					JOptionPane.showMessageDialog(this, "Congratulations " + namearg + "! You can now log in!");
+					crave.reshowLogin(this);
+				}
+				else {		 //username taken
+					JOptionPane.showMessageDialog(this,
+							"                    Invalid Credentials:" + '\n' +
+			                "Sorry! That username has already been taken",
+			                "Error Message",
+			                JOptionPane.ERROR_MESSAGE);
+				}
 	        }
-			else {
+			else {		//length of credentials is insufficient
 	            JOptionPane.showMessageDialog(this,
-	                "           Invalid Credentials:" + '\n' +
+	                "                    Invalid Credentials:" + '\n' +
 	                "Username must be > 2 letters/numbers" + '\n' +
 	                "Password must be > 3 letters/numbers",
 	                "Error Message",
@@ -144,11 +153,17 @@ public class RegWindow extends JFrame implements ActionListener {
 	}
 	
 	private void registerUser(String namearg, String username, char[] password) {
-		//use DB to add user insertion
+		// Insert user instance in db with given credentials
+		crave.dbAccess.insertUser(namearg, username, password, crave.conn);
 	}
 	
 	private boolean isInputValid(String username, char[] pwInput) {
 		// Check username and password length
 		return (username.length() > 2 && pwInput.length > 3);
+	}
+	
+	private boolean isUsernameValid(String username) {
+		// Check if a username is taken
+		return crave.dbAccess.checkUsername(username, crave.conn);
 	}
 }

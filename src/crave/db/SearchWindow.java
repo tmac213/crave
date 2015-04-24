@@ -2,6 +2,8 @@ package crave.db;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.swing.*;
 
@@ -122,7 +124,10 @@ public class SearchWindow extends JFrame implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		ResultSet rs = null;
 		
+		
+		try { if (rs != null) rs.close(); } catch (SQLException ex) { ex.printStackTrace(); }
 	}
 	
 }
