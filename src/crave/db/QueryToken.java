@@ -1,4 +1,3 @@
-package crave.db;
 
 public class QueryToken extends Object {
   

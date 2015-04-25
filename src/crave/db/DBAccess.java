@@ -1,24 +1,13 @@
-package crave.db;
-
 import java.sql.*;
 import java.util.Properties;
 
 public class DBAccess {
 	
-	private String words = "null";
-	private String type = "null";
-	private String origin = "null";
-	private String price = "null";
-	private String cmp = "null";
-	private String gb = "null";
-	private String ob = "null";
-	private String queryTemplate = "name " + words + " type " + type + " origin " + origin + " price " + price + " cmp " + cmp + " gb " + gb + " ob " + ob;
-	
 	/** The name of the MySQL account to use */
-	private final String userName = "root";
+	private final String userName = "appUser";
 
 	/** The password for the MySQL account */
-	private final String password = "";
+	private final String password = "Food216";
 
 	/** The name of the MySQL server */
 	private final String serverName = "localhost";
@@ -71,26 +60,39 @@ public class DBAccess {
 		return pw.toCharArray();
 	}
 	
+	public void insertUser(String name, String username, char[] password, Connection conn) {
+		
+	}
+	
+	public boolean checkUsername(String name, Connection conn) {
+		return false;
+	}
+	
 	/** Executes a general query using the query generator and returns the result set */
-	public ResultSet generalQuery(Connection conn) {
+	public Pair<ResultSet, Statement> generalQuery(Connection conn, String argString, QueryManager manager) {
 		System.out.println("Querying database...");
 		Statement stmt = null;
 		ResultSet rs = null;
 		
-		/* Get query from Andrews generator using querytemplate string */
-		String query = "";	// = getQuery(queryTemplate);
+		//get the query according to the argString parameters (created in actionPerformed
+		//method of SearchWindow
+		Query q = manager.produceQuery(argString);
+		manager.flush();
+		
+		System.out.println("[DATABASE ACCESS] Query: \n" + q);
 		
 		try {
 			stmt = conn.createStatement();
-			rs = stmt.executeQuery(query);
+			rs = stmt.executeQuery(q.getQuery());
 		} catch (SQLException e) {
 			System.err.println("ERROR: Could not execute query");
 			e.printStackTrace();
-		} finally {
-			try { if (stmt != null) stmt.close(); } catch (SQLException e) { e.printStackTrace(); }
-			System.out.print('\n');
-		}
-		return rs;
+		} 
+//		finally {
+//			try { if (stmt != null) stmt.close(); } catch (SQLException e) { e.printStackTrace(); }
+//			System.out.print('\n');
+//		}
+		return new Pair<ResultSet, Statement>(rs, stmt);
 	}
 	
 	/**

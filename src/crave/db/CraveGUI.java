@@ -1,4 +1,4 @@
-package crave.db;
+
 
 import java.awt.*;
 import java.awt.event.WindowEvent;
@@ -17,6 +17,15 @@ public class CraveGUI {
 		
 		/* Create a query manager */
 		qman = new QueryManager();
+		try
+		{
+			this.qman.addTemplate(new QueryTemplate("templates/master_query.txt"));
+		}
+		catch(Exception e)
+		{
+			System.err.println("Error loading query template.");
+			return;
+		}
 		
     	/* Connect to the database */
     	DBAccess db = new DBAccess();
@@ -24,24 +33,56 @@ public class CraveGUI {
     		
     	//System.out.println("Connecting to database...\n");
     	
-    	//conn = db.getConnection();
+    	try
+    	{
+    		conn = db.getConnection();
+    	}
+    	catch(SQLException e)
+    	{
+    		System.err.println("Error connecting to database.");
+    		e.printStackTrace();
+    	}
     	
     	/* Bring up GUI */
-    	createAndShowGUI(this);
+    	showLogin();
 
     	/* Disconnect from database */
     	//db.cleanup(conn);
     	
 	}
 	
-	public void createAndShowGUI(CraveGUI crave) {
-		new LoginWindow(crave);
+	public void showLogin() {
+		new LoginWindow(this);
+	}
+	
+	public void reshowLogin(JFrame frame) {
+		frame.dispose();
+		new LoginWindow(this);
+	}
+	
+	public void registerUser(LoginWindow log) {
+		log.dispose();
+		new RegWindow(this);
 	}
 	
 	public void loginSuccess(LoginWindow log) {
 		log.dispose();
-		SearchWindow search = new SearchWindow();
+		new SearchWindow(this);
 	}
+	
+	public void centerFrame(JFrame frame) {
+    	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		Point middle = new Point(screenSize.width / 2, screenSize.height / 2);
+		Point newLocation = new Point(middle.x - (frame.getWidth() / 2), 
+		                              middle.y - (frame.getHeight() / 2));
+		frame.setLocation(newLocation);
+    }
+	
+	public QueryManager getManager() { return this.qman; }
+	
+	public Connection getConnection() { return this.conn; }
+	
+	public DBAccess getDatabaseAccess() { return this.dbAccess; }
 	
 	public static void main(String[] args) {
         //Schedule a job for the event-dispatching thread:

@@ -1,10 +1,9 @@
-package crave.db;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
+
 
 public class QueryManager {
   
@@ -23,7 +22,7 @@ public class QueryManager {
     return this.template_;
   }
   
-  private HashSet<String> getRules() { return this.rules_; }
+  public HashSet<String> getRules() { return this.rules_; }
   
   public boolean addTemplate(QueryTemplate template)
   {
