@@ -10,19 +10,19 @@ GRANT DELETE ON restaurantsApp.* TO 'appuser'@'localhost';
 
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
-	ID 		INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	name	VARCHAR(45) NOT NULL,
+    ID      INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    name    VARCHAR(45) NOT NULL,
     username    VARCHAR(45) NOT NULL,
 
-	PRIMARY KEY (ID),
+    PRIMARY KEY (ID),
     UNIQUE (username)
 );
 
 DROP TABLE IF EXISTS restaurants;
 CREATE TABLE restaurants (
-	ID		INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	name	VARCHAR(45) NOT NULL,
-    address	VARCHAR(45) NOT NULL,
+    ID      INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    name    VARCHAR(45) NOT NULL,
+    address VARCHAR(45) NOT NULL,
     
     PRIMARY KEY (ID),
     UNIQUE (name, address)
@@ -30,11 +30,10 @@ CREATE TABLE restaurants (
 
 DROP TABLE IF EXISTS dishes;
 CREATE TABLE dishes (
-	ID			INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    name		VARCHAR(45)	NOT NULL,
-    avgPrice	INT UNSIGNED,
+    ID          INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    name        VARCHAR(45) NOT NULL,
+    avgPrice    INT UNSIGNED,
     avgRating   SMALLINT UNSIGNED,
-    description	VARCHAR(100),
     
     PRIMARY KEY (ID)
 );
@@ -50,8 +49,8 @@ CREATE TABLE types (
 
 DROP TABLE IF EXISTS regions;
 CREATE TABLE regions (
-	ID		INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    name	VARCHAR(45) NOT NULL,
+    ID      INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    name    VARCHAR(45) NOT NULL,
     
     PRIMARY KEY (ID),
     UNIQUE (name)
@@ -110,8 +109,8 @@ CREATE TABLE restaurantOrigin (
 
 DROP TABLE IF EXISTS locatedIn;
 CREATE TABLE locatedIn (
-	resID	INT UNSIGNED NOT NULL,
-    regID	INT UNSIGNED NOT NULL,
+    resID   INT UNSIGNED NOT NULL,
+    regID   INT UNSIGNED NOT NULL,
     
     PRIMARY KEY (resID, regID),
     FOREIGN KEY (resID) REFERENCES restaurants(ID)
@@ -124,9 +123,10 @@ CREATE TABLE locatedIn (
 
 DROP TABLE IF EXISTS serves;
 CREATE TABLE serves (
-	rID		INT UNSIGNED NOT NULL,
-    dID		INT UNSIGNED NOT NULL,
+    rID     INT UNSIGNED NOT NULL,
+    dID     INT UNSIGNED NOT NULL,
     price   INT UNSIGNED NOT NULL,
+    description VARCHAR(100),
     
     PRIMARY KEY (rID, dID),
     FOREIGN KEY (rID) REFERENCES restaurants(ID)
@@ -136,12 +136,24 @@ CREATE TABLE serves (
         ON UPDATE CASCADE
         ON DELETE CASCADE
 );
+DELIMITER //
+DROP TRIGGER IF EXISTS update_avg_price//
+CREATE TRIGGER update_avg_price AFTER INSERT ON serves
+FOR EACH ROW BEGIN
+    DECLARE oldCount INT;
+    SET oldCount = (SELECT  count(*)
+                    FROM    serves
+                    WHERE   dID = NEW.dID);
+    UPDATE dishes SET avgPrice = ((avgPrice*oldCount) + NEW.price) / (oldCount + 1);
+END//
+DELIMITER ;
+
 
 DROP TABLE IF EXISTS visits;
 CREATE TABLE visits (
-	uID		INT UNSIGNED NOT NULL,
-    rID		INT UNSIGNED NOT NULL,
-    times	INT UNSIGNED NOT NULL default 0,
+    uID     INT UNSIGNED NOT NULL,
+    rID     INT UNSIGNED NOT NULL,
+    times   INT UNSIGNED NOT NULL default 0,
     
     PRIMARY KEY (uID, rID),
     FOREIGN KEY (uID) REFERENCES users(ID)
@@ -154,10 +166,10 @@ CREATE TABLE visits (
 
 DROP TABLE IF EXISTS reviews;
 CREATE TABLE reviews (
-	rID		INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	uID		INT UNSIGNED NOT NULL,
-    dID		INT UNSIGNED NOT NULL,
-    rating	SMALLINT UNSIGNED NOT NULL,
+    rID     INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    uID     INT UNSIGNED NOT NULL,
+    dID     INT UNSIGNED NOT NULL,
+    rating  SMALLINT UNSIGNED NOT NULL,
     
     PRIMARY KEY (rID),
     FOREIGN KEY (uID) REFERENCES users(ID)
@@ -167,4 +179,14 @@ CREATE TABLE reviews (
         ON UPDATE CASCADE
         ON DELETE CASCADE
 );
+DELIMITER //
+CREATE TRIGGER update_avg_rating AFTER INSERT ON reviews
+FOR EACH ROW BEGIN
+    DECLARE oldCount INT;
+    SET oldCount = (SELECT  count(*)
+                    FROM    serves
+                    WHERE   dID = NEW.dID);
+    UPDATE dishes SET avgRating = ((avgRating*oldCount) + NEW.rating) / (oldCount + 1);
+END//
+DELIMITER ;
 
