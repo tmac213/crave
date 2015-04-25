@@ -3,10 +3,10 @@ USE restaurantsApp;
 DROP USER 'appUser'@'localhost';
 FLUSH PRIVILEGES;
 CREATE USER 'appUser'@'localhost' IDENTIFIED BY 'Food216';
-GRANT SELECT ON restaurantsApp.* TO 'appuser'@'localhost';
-GRANT INSERT ON restaurantsApp.* TO 'appuser'@'localhost';
-GRANT UPDATE ON restaurantsApp.* TO 'appuser'@'localhost';
-GRANT DELETE ON restaurantsApp.* TO 'appuser'@'localhost';
+GRANT SELECT ON restaurantsApp.* TO 'appUser'@'localhost';
+GRANT INSERT ON restaurantsApp.* TO 'appUser'@'localhost';
+GRANT UPDATE ON restaurantsApp.* TO 'appUser'@'localhost';
+GRANT DELETE ON restaurantsApp.* TO 'appUser'@'localhost';
 
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
