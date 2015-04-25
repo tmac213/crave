@@ -144,25 +144,9 @@ FOR EACH ROW BEGIN
     SET oldCount = (SELECT  count(*)
                     FROM    serves
                     WHERE   dID = NEW.dID);
-    UPDATE dishes SET avgPrice = ((avgPrice*oldCount) + NEW.price) / (oldCount + 1);
+    UPDATE dishes SET avgPrice = ((avgPrice*oldCount) + NEW.price) / (oldCount + 1) WHERE ID = NEW.dID;
 END//
 DELIMITER ;
-
-
-DROP TABLE IF EXISTS visits;
-CREATE TABLE visits (
-    uID     INT UNSIGNED NOT NULL,
-    rID     INT UNSIGNED NOT NULL,
-    times   INT UNSIGNED NOT NULL DEFAULT 0,
-    
-    PRIMARY KEY (uID, rID),
-    FOREIGN KEY (uID) REFERENCES users(ID)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
-    FOREIGN KEY (rID) REFERENCES restaurants(ID)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE
-);
 
 DROP TABLE IF EXISTS reviews;
 CREATE TABLE reviews (
@@ -186,7 +170,7 @@ FOR EACH ROW BEGIN
     SET oldCount = (SELECT  count(*)
                     FROM    serves
                     WHERE   dID = NEW.dID);
-    UPDATE dishes SET avgRating = ((avgRating*oldCount) + NEW.rating) / (oldCount + 1);
+    UPDATE dishes SET avgRating = ((avgRating*oldCount) + NEW.rating) / (oldCount + 1) WHERE ID = NEW.dID;
 END//
 DELIMITER ;
 
