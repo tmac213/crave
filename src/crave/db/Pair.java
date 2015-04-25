@@ -1,3 +1,5 @@
+package crave.db;
+
 public class Pair<T,V> extends Object {
 	
 	private T val1_;

@@ -1,3 +1,4 @@
+package crave.db;
 
 import java.awt.*;
 import java.awt.event.*;

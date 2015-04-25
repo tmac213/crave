@@ -1,3 +1,5 @@
+package crave.db;
+
 import java.util.HashMap;
 import java.util.Queue;
 import java.util.Iterator;
