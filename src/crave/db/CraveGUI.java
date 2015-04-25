@@ -1,4 +1,4 @@
-package crave.db;
+
 
 import java.awt.*;
 import java.awt.event.WindowEvent;
@@ -17,6 +17,15 @@ public class CraveGUI {
 		
 		/* Create a query manager */
 		qman = new QueryManager();
+		try
+		{
+			this.qman.addTemplate(new QueryTemplate("templates/master_query.txt"));
+		}
+		catch(Exception e)
+		{
+			System.err.println("Error loading query template.");
+			return;
+		}
 		
     	/* Connect to the database */
     	DBAccess db = new DBAccess();
@@ -24,7 +33,15 @@ public class CraveGUI {
     		
     	//System.out.println("Connecting to database...\n");
     	
-    	//conn = db.getConnection();
+    	try
+    	{
+    		conn = db.getConnection();
+    	}
+    	catch(SQLException e)
+    	{
+    		System.err.println("Error connecting to database.");
+    		e.printStackTrace();
+    	}
     	
     	/* Bring up GUI */
     	showLogin();
@@ -61,6 +78,15 @@ public class CraveGUI {
 		frame.setLocation(newLocation);
     }
 	
+<<<<<<< HEAD
+	public QueryManager getManager() { return this.qman; }
+	
+	public Connection getConnection() { return this.conn; }
+	
+	public DBAccess getDatabaseAccess() { return this.dbAccess; }
+	
+=======
+>>>>>>> origin/master
 	public static void main(String[] args) {
         //Schedule a job for the event-dispatching thread:
         //creating and showing this application's GUI.

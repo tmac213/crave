@@ -1,5 +1,3 @@
-package crave.db;
-
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -10,6 +8,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 public class QueryTemplate extends Object {
   
@@ -28,7 +27,7 @@ public class QueryTemplate extends Object {
     Matcher m = null;
     boolean matched = true;
     String arg = null;
-    for(String line = reader.readLine(); line != null; line = reader.readLine())
+    for(String line = reader.readLine(); line != null && !line.equals("-----------RELATIONAL SCHEMA---------------"); line = reader.readLine())
     {
 //      System.out.println("line: " + line + " length: " + line.length());
       matched = true;

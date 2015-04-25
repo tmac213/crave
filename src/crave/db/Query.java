@@ -1,5 +1,3 @@
-package crave.db;
-
 import java.util.HashMap;
 import java.util.Queue;
 import java.util.Iterator;
@@ -27,23 +25,30 @@ public class Query extends Object {
       {
 //        System.out.println("\tFOUND ARGUMENT: [" + line + "]\tREPLACING WITH: " + args.get(line));
         needPercentCheck = args.get(line).toLowerCase();
+        if(addPercent)
+        {
+        	b.append("%" + args.get(line) + "%");
+        	addPercent = false;
+        }
+        else { b.append(args.get(line)); }
         if(needPercentCheck.equals("is like") || needPercentCheck.equals("is not like")) { addPercent = true; }
-        b.append(args.get(line));
       }
       else if(line.equals(" ") || line.equals(")")) { b.append(line); }
       else
       {
 //        System.out.println("\tDID NOT FIND ARGUMENT");
-        if(line.contains(".name"))
-        {
-          if(addPercent)
-          {
-            b.append(this.addPercentSigns(line));
-            addPercent = false;
-          }
-          else { b.append(line); }
-        }
-        else { b.append("\n" + line); }
+//        if(line.contains("WORDARG"))
+//        {
+//          System.out.println("WORDARGALDSLKGSDAGJSIA");
+//          if(addPercent)
+//          {
+//            b.append(this.addPercentSigns(line));
+//            addPercent = false;
+//          }
+//          else { b.append(line); }
+//        }
+//        else { b.append("\n" + line); }
+    	  b.append("\n" + line);
       }
       if(!iterator.hasNext())
       {
