@@ -32,7 +32,7 @@ DROP TABLE IF EXISTS dishes;
 CREATE TABLE dishes (
     ID          INT UNSIGNED NOT NULL AUTO_INCREMENT,
     name        VARCHAR(45) NOT NULL,
-    avgPrice    INT UNSIGNED,
+    avgPrice    DECIMAL(4,2),
     avgRating   SMALLINT UNSIGNED,
     
     PRIMARY KEY (ID)
@@ -125,7 +125,7 @@ DROP TABLE IF EXISTS serves;
 CREATE TABLE serves (
     rID     INT UNSIGNED NOT NULL,
     dID     INT UNSIGNED NOT NULL,
-    price   INT UNSIGNED NOT NULL,
+    price   DECIMAL NOT NULL,
     description VARCHAR(100),
     
     PRIMARY KEY (rID, dID),
