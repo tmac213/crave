@@ -78,12 +78,15 @@ public class CraveGUI {
 		frame.setLocation(newLocation);
     }
 	
+<<<<<<< HEAD
 	public QueryManager getManager() { return this.qman; }
 	
 	public Connection getConnection() { return this.conn; }
 	
 	public DBAccess getDatabaseAccess() { return this.dbAccess; }
 	
+=======
+>>>>>>> origin/master
 	public static void main(String[] args) {
         //Schedule a job for the event-dispatching thread:
         //creating and showing this application's GUI.

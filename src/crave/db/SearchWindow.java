@@ -4,30 +4,42 @@ import java.awt.*;
 import java.awt.event.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+<<<<<<< HEAD
 import java.sql.Statement;
 import java.util.HashMap;
+=======
+>>>>>>> origin/master
 
 import javax.swing.*;
 
 public class SearchWindow extends JFrame implements ActionListener {
 	
 	public CraveGUI crave;
+<<<<<<< HEAD
 	private ResultWindow queryResults;
 	HashMap<Component, String> componentMap;
+=======
+>>>>>>> origin/master
 	
 	public SearchWindow(CraveGUI gui) {
 		crave = gui;
 		
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
+<<<<<<< HEAD
 		this.componentMap = new HashMap<Component, String>(4);
 		
+=======
+>>>>>>> origin/master
 		addComponentsToPane();
 		setSize(700,300);
 		pack();
 		crave.centerFrame(this);
+<<<<<<< HEAD
 		this.queryResults = new ResultWindow(gui, this);
 		
+=======
+>>>>>>> origin/master
 		setVisible(true);
 	}
 	
@@ -45,8 +57,11 @@ public class SearchWindow extends JFrame implements ActionListener {
 		
 		/* Create the components of the login window */
         JTextField dishText = new JTextField(15);
+<<<<<<< HEAD
         this.getComponentMap().put(dishText, "Dish Name");
         
+=======
+>>>>>>> origin/master
         JComboBox types = new JComboBox(typeVals);
         this.getComponentMap().put(types, "Type");
         
@@ -145,7 +160,10 @@ public class SearchWindow extends JFrame implements ActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		ResultSet rs = null;
 		
+		
+<<<<<<< HEAD
 		if(this.getResultWindow() == null) { this.setResultWindow(new ResultWindow(this.crave, this)); }
 		
 		System.out.println("[SEARCH WINDOW] args to parse out of input: " + this.crave.getManager().getRules());
@@ -218,6 +236,9 @@ public class SearchWindow extends JFrame implements ActionListener {
 		}
 		
 		return null;
+=======
+		try { if (rs != null) rs.close(); } catch (SQLException ex) { ex.printStackTrace(); }
+>>>>>>> origin/master
 	}
 	
 }

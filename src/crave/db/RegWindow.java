@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+package crave.db;
+>>>>>>> origin/master
 
 import java.awt.Component;
 import java.awt.Container;
@@ -165,4 +169,8 @@ public class RegWindow extends JFrame implements ActionListener {
 		// Check if a username is taken
 		return crave.dbAccess.checkUsername(username, crave.conn);
 	}
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> origin/master
