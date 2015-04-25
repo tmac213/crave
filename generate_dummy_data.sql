@@ -1,3 +1,5 @@
+USE restaurantsApp;
+
 INSERT INTO dishes (name)
 VALUES	("hamburger"),
 		("cheeseburger"),
@@ -29,7 +31,6 @@ VALUES	("American"),
 		("Italian"),
 		("Mexican");
 		
-
 INSERT INTO serves (rID, dID, price, description)
 VALUES	(1, 1, 2.75, "a hamburger"),
 		(1, 2, 3.50, "a cheeseburger"),
