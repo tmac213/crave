@@ -32,8 +32,8 @@ DROP TABLE IF EXISTS dishes;
 CREATE TABLE dishes (
     ID          INT UNSIGNED NOT NULL AUTO_INCREMENT,
     name        VARCHAR(45) NOT NULL,
-    avgPrice    DOUBLE,
-    avgRating   SMALLINT UNSIGNED,
+    avgPrice    DOUBLE DEFAULT 0.00,
+    avgRating   SMALLINT UNSIGNED DEFAULT 0,
     
     PRIMARY KEY (ID)
 );
@@ -153,7 +153,7 @@ DROP TABLE IF EXISTS visits;
 CREATE TABLE visits (
     uID     INT UNSIGNED NOT NULL,
     rID     INT UNSIGNED NOT NULL,
-    times   INT UNSIGNED NOT NULL default 0,
+    times   INT UNSIGNED NOT NULL DEFAULT 0,
     
     PRIMARY KEY (uID, rID),
     FOREIGN KEY (uID) REFERENCES users(ID)
