@@ -165,6 +165,6 @@ public class RegWindow extends JFrame implements ActionListener {
 	
 	private boolean isUsernameValid(String username) {
 		// Check if a username is taken
-		return crave.dbAccess.checkUsername(username, crave.conn);
+		return !crave.dbAccess.usernameExists(username, crave.conn);
 	}
 }

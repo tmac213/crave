@@ -78,7 +78,7 @@ public class DBAccess {
         }
     }
 	
-	public boolean checkUsername(String username, Connection conn) {
+	public boolean usernameExists(String username, Connection conn) {
         System.out.printf("Checking for username %s\n", username);
         Statement statement = null;
         ResultSet resultSet = null;
@@ -93,7 +93,7 @@ public class DBAccess {
             System.err.println("ERROR: Could not check username");
             e.printStackTrace();
         }
-        return result == 0;
+        return result > 0;
     }
 	
 	/** Executes a general query using the query generator and returns the result set */

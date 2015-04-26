@@ -3,6 +3,7 @@ package crave.db;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
@@ -13,6 +14,8 @@ public class SearchWindow extends JFrame implements ActionListener {
 	
 	public CraveGUI crave;
 	private ResultWindow queryResults;
+	private JTextArea resultText;
+	private JScrollPane resPane;
 	HashMap<Component, String> componentMap;
 	
 	public SearchWindow(CraveGUI gui) {
@@ -43,7 +46,10 @@ public class SearchWindow extends JFrame implements ActionListener {
 		String[] originsVals = {"None", "Any", "Italian", "Chinese", "American", "Thai", "Indian"};
 		String[] orderByVals = {"Price", "Rating"};
 		
-		/* Create the components of the login window */
+		/* Create the components of the search window */
+		JTextArea results = new JTextArea();
+		this.resultText = results;
+		
         JTextField dishText = new JTextField(15);
         this.getComponentMap().put(dishText, "Dish Name");
         
@@ -58,7 +64,7 @@ public class SearchWindow extends JFrame implements ActionListener {
         
         JLabel titleLabel = new JLabel("Crave");
         JLabel detailLabel = new JLabel("Search our database to find the food you're craving!");
-        JLabel dishLabel = new JLabel("Words the dish's name contains?");
+        JLabel dishLabel = new JLabel("Search keywords?");
         JLabel typeLabel = new JLabel("The type of dish?");
         JLabel originsLabel = new JLabel("Origin of the dish?");
         JLabel orderByLabel = new JLabel("Sort the results by...");
@@ -114,6 +120,22 @@ public class SearchWindow extends JFrame implements ActionListener {
         searchPanel.setLayout(new BoxLayout(searchPanel, BoxLayout.X_AXIS));
         searchPanel.setBorder(BorderFactory.createEmptyBorder(25,25,25,25));
         
+        JPanel leftPanel = new JPanel();
+        leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
+        leftPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        
+        JScrollPane resultPane = new JScrollPane(results);
+        resultPane.setBorder(
+                BorderFactory.createCompoundBorder(
+                        BorderFactory.createTitledBorder("Search Result(s)"),
+                        BorderFactory.createEmptyBorder(200, 200, 200, 200)));
+
+        resultPane.getVerticalScrollBar().setUnitIncrement(16);
+        resultPane.getHorizontalScrollBar().setUnitIncrement(16);
+        resultPane.setSize(this.getSize());
+        resultPane.setVisible(true);
+        this.resPane = resultPane;
+        
         /* Add components to panels */
         titlePanel.add(titleLabel);
         titlePanel.add(detailLabel);
@@ -133,12 +155,15 @@ public class SearchWindow extends JFrame implements ActionListener {
 
         searchPanel.add(search);
         
+        leftPanel.add(titlePanel);
+        leftPanel.add(centerPanel);
+        leftPanel.add(searchPanel);
+        
         /* Add the panels to the top-level content pane */
         Container pane = getContentPane();		//Outermost frame's c-pane
-        pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
-        pane.add(titlePanel);
-        pane.add(centerPanel);
-        pane.add(searchPanel);
+        pane.setLayout(new BoxLayout(pane, BoxLayout.X_AXIS));
+        pane.add(leftPanel);
+        pane.add(resultPane);
     }
 
 	private HashMap<Component, String> getComponentMap() { return this.componentMap; }
@@ -181,7 +206,8 @@ public class SearchWindow extends JFrame implements ActionListener {
 		ResultSet rs = pair.getVal1();
 		
 		//update the result window with the query result.
-		this.getResultWindow().update(rs);
+		//this.getResultWindow().update(rs);
+		update(rs);
 		
 		try { pair.getVal2().close(); }
 		catch(SQLException error) { error.printStackTrace(); }
@@ -218,6 +244,53 @@ public class SearchWindow extends JFrame implements ActionListener {
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * Updates the results pane with the latest search results
+	 * @param set The ResultSet returned from the SQL query
+	 */
+	public void update(ResultSet set)
+	{
+		try
+		{
+			resultText.setText(null);
+			resultText.append("dish name \t rest. name \t rest. address \t price \t avg rating\n");
+			resultText.append("------------------------------------------------------------------------" +
+					"----------------------------------------------------------\n");
+			
+			//this contains useful information like the number of columns per tuple...things like that
+			ResultSetMetaData metaData = set.getMetaData();
+			
+			System.out.println("Number of columns: " + metaData.getColumnCount());
+			
+			//iterate over every tuple
+			while(set.next())
+			{
+				//iterate over every column in the tuple
+				for(int i = 1; i <= metaData.getColumnCount(); i++)
+				{
+					
+					//append column of tuple to field
+					resultText.append(set.getString(i));
+					
+					if(i < metaData.getColumnCount()) { resultText.append("\t"); }
+					
+					//worry about clickable things later
+				}
+				resultText.append("\n");
+			}
+			
+			//make sure window is legal and repaint
+			this.revalidate();
+			this.repaint();
+			this.pack();
+		}
+		catch(SQLException e)
+		{
+			System.err.println("Error updating ResultWindow with ResultSet");
+			e.printStackTrace();
+		}
 	}
 	
 }

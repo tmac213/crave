@@ -1,6 +1,7 @@
 package crave.db;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -119,21 +120,28 @@ public class LoginWindow extends JFrame implements ActionListener {
 			crave.registerUser(this);
 		}
 		else {
-			if (isPasswordCorrect()) {
+			if (isUsernameValid() && isPasswordCorrect() ) {
 				crave.loginSuccess(this, user.getText());
 	        } 
 			else {
 	            JOptionPane.showMessageDialog(this,
-	                "Invalid password. Try again.",
+	                "Invalid credentials. Try again.",
 	                "Error Message",
 	                JOptionPane.ERROR_MESSAGE);
 	        }
 		}
 	}
 	
+	private boolean isUsernameValid() {
+		// Check if a username is taken
+		String username = user.getText();
+		return username.length() != 0 && crave.dbAccess.usernameExists(username, crave.conn);
+	}
+	
 	private boolean isPasswordCorrect() {
-		char[] password = crave.dbAccess.queryPassword(user.getText(), crave.conn);
 		char[] input = pass.getPassword();
+		char[] password = crave.dbAccess.queryPassword(user.getText(), crave.conn);
+		
 		if (password.length != input.length) {
 			return false;
 		}

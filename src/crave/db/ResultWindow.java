@@ -103,9 +103,9 @@ public class ResultWindow extends JFrame implements ActionListener {
 				this.getOutputText().append("\n");
 			}
 			//make sure window is legal and repaint
-			this.revalidate();
-			this.pack();
-			this.repaint();
+			//this.revalidate();
+			//this.pack();
+			//this.repaint();
 		}
 		catch(SQLException e)
 		{
