@@ -29,11 +29,11 @@ public class Query extends Object {
         needPercentCheck = args.get(line).toLowerCase();
         if(addPercent)
         {
-        	b.append("%" + args.get(line) + "%");
+        	b.append("\"%" + args.get(line) + "%\"");
         	addPercent = false;
         }
         else { b.append(args.get(line)); }
-        if(needPercentCheck.equals("is like") || needPercentCheck.equals("is not like")) { addPercent = true; }
+        if(needPercentCheck.equals("like") || needPercentCheck.equals("not like")) { addPercent = true; }
       }
       else if(line.equals(" ") || line.equals(")")) { b.append(line); }
       else
