@@ -1,19 +1,18 @@
 package crave.db;
 
-import java.awt.*;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.sql.*;
-
 import javax.swing.*;
+import java.awt.*;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class CraveGUI {
 	
 	public Connection conn;			//the database connection
 	public DBAccess dbAccess;		//database access class
 	public QueryManager qman;		//a query generator given user input
-	
-	public CraveGUI() throws SQLException{
+    private String currentUser;
+
+    public CraveGUI() throws SQLException{
 		
 		/* Create a query manager */
 		qman = new QueryManager();
@@ -65,7 +64,8 @@ public class CraveGUI {
 		new RegWindow(this);
 	}
 	
-	public void loginSuccess(LoginWindow log) {
+	public void loginSuccess(LoginWindow log, String username) {
+        this.currentUser = username;
 		log.dispose();
 		new SearchWindow(this);
 	}

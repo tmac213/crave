@@ -47,9 +47,9 @@ public class DBAccess {
 		String pw = null;
 		try {
 			stmt = conn.createStatement();
-			rs = stmt.executeQuery(String.format("select U.password from users U where U.name = %s;", username));
+			rs = stmt.executeQuery(String.format("select U.password from users U where U.username = \"%s\";", username));
 			while (rs.next()) {
-				 pw = rs.getString("name");
+				 pw = rs.getString("password");
 			}
 		} catch (SQLException e) {
 			System.err.println("ERROR: Could not execute query");
