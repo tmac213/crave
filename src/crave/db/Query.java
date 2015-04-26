@@ -29,7 +29,7 @@ public class Query extends Object {
         needPercentCheck = args.get(line).toLowerCase();
         if(addPercent)
         {
-        	b.append("%" + args.get(line) + "%");
+        	b.append("\"%" + args.get(line) + "%\"");
         	addPercent = false;
         }
         else { b.append(args.get(line)); }

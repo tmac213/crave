@@ -193,7 +193,7 @@ public class SearchWindow extends JFrame implements ActionListener {
 		String text = null;
 		if(c instanceof JTextField)
 		{
-			return (text = ((JTextField)c).getText()).equals("") ? "" : " SIGNARG2 is like" + " WORDARG \"" + text + "\"";
+			return (text = ((JTextField)c).getText()).equals("") ? "" : " SIGNARG2 is like" + " WORDARG " + text;
 		}
 		else if(c instanceof JComboBox)
 		{
