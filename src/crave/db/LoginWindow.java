@@ -1,10 +1,10 @@
 package crave.db;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Arrays;
-
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Arrays;
 
 /**
  * The frame on the Crave GUI that contains the login window
@@ -120,7 +120,7 @@ public class LoginWindow extends JFrame implements ActionListener {
 		}
 		else {
 			if (isPasswordCorrect()) {
-				crave.loginSuccess(this);
+				crave.loginSuccess(this, user.getText());
 	        } 
 			else {
 	            JOptionPane.showMessageDialog(this,
@@ -132,8 +132,6 @@ public class LoginWindow extends JFrame implements ActionListener {
 	}
 	
 	private boolean isPasswordCorrect() {
-		return true;
-		/*
 		char[] password = crave.dbAccess.queryPassword(user.getText(), crave.conn);
 		char[] input = pass.getPassword();
 		if (password.length != input.length) {
@@ -142,7 +140,6 @@ public class LoginWindow extends JFrame implements ActionListener {
 		else {
 			return Arrays.equals(password, input);
 		}
-		*/
 	}
 	
 }

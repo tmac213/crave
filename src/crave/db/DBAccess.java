@@ -47,9 +47,9 @@ public class DBAccess {
 		String pw = null;
 		try {
 			stmt = conn.createStatement();
-			rs = stmt.executeQuery("select U.password from User U where U.name = " + username);
+			rs = stmt.executeQuery(String.format("select U.password from users U where U.username = \"%s\";", username));
 			while (rs.next()) {
-				 pw = rs.getString("name");
+				 pw = rs.getString("password");
 			}
 		} catch (SQLException e) {
 			System.err.println("ERROR: Could not execute query");
@@ -63,12 +63,38 @@ public class DBAccess {
 	}
 	
 	public void insertUser(String name, String username, char[] password, Connection conn) {
-		
-	}
+        String pwString = new String(password);
+        System.out.printf("Inserting user %s with username %s and password %s\n", name, username, pwString);
+        Statement statement = null;
+        try {
+            statement = conn.createStatement();
+            statement.executeUpdate(String.format("insert into users(name, username, password) values (\"%s\", \"%s\", \"%s\");", name, username, pwString));
+        } catch (SQLException e) {
+            System.err.println("ERROR: Could not create user");
+            e.printStackTrace();
+        } finally {
+            try { if (statement != null) statement.close(); } catch (SQLException e) { e.printStackTrace(); }
+            System.out.println('\n');
+        }
+    }
 	
-	public boolean checkUsername(String name, Connection conn) {
-		return false;
-	}
+	public boolean checkUsername(String username, Connection conn) {
+        System.out.printf("Checking for username %s\n", username);
+        Statement statement = null;
+        ResultSet resultSet = null;
+        int result = -1;
+        try {
+            statement = conn.createStatement();
+            resultSet = statement.executeQuery(String.format("select count(*) from users where username = \"%s\";", username));
+            if (resultSet.next()) {
+                result = resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("ERROR: Could not check username");
+            e.printStackTrace();
+        }
+        return result == 0;
+    }
 	
 	/** Executes a general query using the query generator and returns the result set */
 	public Pair<ResultSet, Statement> generalQuery(Connection conn, String argString, QueryManager manager) {

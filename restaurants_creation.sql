@@ -13,6 +13,7 @@ CREATE TABLE users (
     ID      INT UNSIGNED NOT NULL AUTO_INCREMENT,
     name    VARCHAR(45) NOT NULL,
     username    VARCHAR(45) NOT NULL,
+    password    VARCHAR(45) NOT NULL,
 
     PRIMARY KEY (ID),
     UNIQUE (username)
