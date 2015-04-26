@@ -5,7 +5,6 @@ DROP TABLES IF EXISTS
 	dishType,
 	restaurantOrigin,
 	locatedIn,
-	visits,
 	serves,
 	reviews,
 	regions,
