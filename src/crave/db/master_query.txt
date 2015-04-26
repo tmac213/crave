@@ -1,10 +1,25 @@
-SELECT 	d.name, r.name, r.address, serv.price, rev.rating
-FROM   	Dishes as d, Restaurants as r, Serves as serv, Reviews as rev, Origin as o
-WHERE  	serv.rid = r.id AND serv.did = d.id
-	AND d.origin = o.origin AND d.id = rev.did
-	AND d.type = <argument>TYPEARG</argument> AND o.origin = <argument>ORIGINARG</argument>
+SELECT 	d.name, r.name, r.address, serv.price, d.avgRating
+FROM   	dishes as d, restaurants as r, serves as serv, origins as o, types as t, dishOrigin as do, dishType as dt
+WHERE  	(serv.rID, serv.dID) = (r.ID, d.ID)
+	AND (d.ID, d.ID) = (do.dID, dt.dID)
+	AND (o.ID, t.ID) = (do.oID, dt.tID)
+	AND t.name = <argument>TYPEARG</argument> AND o.name = <argument>ORIGINARG</argument>
 	AND serv.price <argument>SIGNARG1</argument> <argument>PRICEARG</argument>
-	AND (<argument>WORDARG</argument> <argument>SIGNARG2</argument> d.name)
-	AND r.times_visited <argument>SIGNARG3</argument> <argument>TRAFFICARG</argument>
+	AND (serv.description <argument>SIGNARG2</argument> <argument>WORDARG</argument>)
+	AND v.times <argument>SIGNARG3</argument> <argument>TRAFFICARG</argument>
 ORDER BY <argument>ORDERARG</argument>
 GROUP BY <argument>GROUPARG</argument>
+
+-----------RELATIONAL SCHEMA---------------
+restaurants(ID, name, address)
+dishes(ID, name, avgPrice, avgRating)
+types(ID, name)
+regions(ID, name)
+origins(ID, name)
+dishOrigin(dID, oID)
+dishType(dID, tID)
+restaurantOrigin(rID, oID)
+locatedIn(resID, regID)
+serves(rID, dID, price, description)
+visits(uID, rID, times)
+reviews(rID, uID, dID, rating)
