@@ -6,7 +6,6 @@ WHERE  	(serv.rID, serv.dID) = (r.ID, d.ID)
 	AND t.name = <argument>TYPEARG</argument> AND o.name = <argument>ORIGINARG</argument>
 	AND serv.price <argument>SIGNARG1</argument> <argument>PRICEARG</argument>
 	AND (serv.description <argument>SIGNARG2</argument> <argument>WORDARG</argument>)
-	AND v.times <argument>SIGNARG3</argument> <argument>TRAFFICARG</argument>
 ORDER BY <argument>ORDERARG</argument>
 GROUP BY <argument>GROUPARG</argument>
 
