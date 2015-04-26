@@ -13,9 +13,7 @@ import javax.swing.*;
 public class SearchWindow extends JFrame implements ActionListener {
 	
 	public CraveGUI crave;
-	private ResultWindow queryResults;
 	private JTextArea resultText;
-	private JScrollPane resPane;
 	HashMap<Component, String> componentMap;
 	
 	public SearchWindow(CraveGUI gui) {
@@ -29,14 +27,9 @@ public class SearchWindow extends JFrame implements ActionListener {
 		setSize(700,300);
 		pack();
 		crave.centerFrame(this);
-		this.queryResults = new ResultWindow(gui, this);
 		
 		setVisible(true);
 	}
-	
-	public ResultWindow getResultWindow() { return this.queryResults; }
-	
-	private void setResultWindow(ResultWindow w) { this.queryResults = w; }
 	
 	/**
 	 * Adds labels, text fields, buttons, panels to frame.
@@ -48,7 +41,9 @@ public class SearchWindow extends JFrame implements ActionListener {
 		
 		/* Create the components of the search window */
 		JTextArea results = new JTextArea();
+		results.setEditable(false);
 		this.resultText = results;
+		resetResults();
 		
         JTextField dishText = new JTextField(15);
         this.getComponentMap().put(dishText, "Dish Name");
@@ -128,13 +123,12 @@ public class SearchWindow extends JFrame implements ActionListener {
         resultPane.setBorder(
                 BorderFactory.createCompoundBorder(
                         BorderFactory.createTitledBorder("Search Result(s)"),
-                        BorderFactory.createEmptyBorder(200, 200, 200, 200)));
+                        BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 
         resultPane.getVerticalScrollBar().setUnitIncrement(16);
         resultPane.getHorizontalScrollBar().setUnitIncrement(16);
         resultPane.setSize(this.getSize());
         resultPane.setVisible(true);
-        this.resPane = resultPane;
         
         /* Add components to panels */
         titlePanel.add(titleLabel);
@@ -170,8 +164,6 @@ public class SearchWindow extends JFrame implements ActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		
-		if(this.getResultWindow() == null) { this.setResultWindow(new ResultWindow(this.crave, this)); }
 		
 		System.out.println("[SEARCH WINDOW] args to parse out of input: " + this.crave.getManager().getRules());
 		
@@ -254,16 +246,13 @@ public class SearchWindow extends JFrame implements ActionListener {
 	{
 		try
 		{
-			resultText.setText(null);
-			resultText.append("dish name \t rest. name \t rest. address \t price \t avg rating\n");
-			resultText.append("------------------------------------------------------------------------" +
-					"----------------------------------------------------------\n");
+			resetResults();
 			
 			//this contains useful information like the number of columns per tuple...things like that
 			ResultSetMetaData metaData = set.getMetaData();
 			
 			System.out.println("Number of columns: " + metaData.getColumnCount());
-			
+			int count = 0;
 			//iterate over every tuple
 			while(set.next())
 			{
@@ -279,6 +268,12 @@ public class SearchWindow extends JFrame implements ActionListener {
 					//worry about clickable things later
 				}
 				resultText.append("\n");
+				count++;
+			}
+			
+			if (count == 0) {
+				resultText.append("No results found. Try expanding your search.");
+				resultText.append("\n");
 			}
 			
 			//make sure window is legal and repaint
@@ -291,6 +286,13 @@ public class SearchWindow extends JFrame implements ActionListener {
 			System.err.println("Error updating ResultWindow with ResultSet");
 			e.printStackTrace();
 		}
+	}
+	
+	private void resetResults() {
+		resultText.setText(null);
+		resultText.append("dish name \t rest. name \t rest. address \t price \t avg rating\n");
+		resultText.append("------------------------------------------------------------------------" +
+				"----------------------------------------------------------\n");
 	}
 	
 }
