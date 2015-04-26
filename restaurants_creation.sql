@@ -35,7 +35,8 @@ CREATE TABLE dishes (
     avgPrice    DOUBLE DEFAULT 0.00,
     avgRating   SMALLINT UNSIGNED DEFAULT 0,
     
-    PRIMARY KEY (ID)
+    PRIMARY KEY (ID),
+    UNIQUE (name)
 );
 
 DROP TABLE IF EXISTS types;
