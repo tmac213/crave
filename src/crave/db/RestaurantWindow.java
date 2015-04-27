@@ -151,7 +151,7 @@ public class RestaurantWindow extends JFrame implements ActionListener {
         setSize(500, 300);
         pack();
         crave.centerFrame(this);
-
+        this.setVisible(true);
     }
 
     private void updateLabels(String dishName) {

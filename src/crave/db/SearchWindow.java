@@ -13,16 +13,45 @@ import javax.swing.*;
 public class SearchWindow extends JFrame implements ActionListener {
 	
 	public CraveGUI crave;
-//	private JTextArea resultText;
-	private JScrollPane scrollPane;
-	private HashMap<Component, String> componentMap;
-	private JPanel masterButtonPanel, masterPanel;
-	private GridBagConstraints constraints;
-	private String titles[] = {"Dish Name", "Rest. Name", "Rest. Address", "Price", "Avg. Rating"};
-	private int maxValueLengths[] = { 20, 13, 20, 6, 4 };
-	private HashMap<String, String> abbreviatedResultMap;
 	
-	private LabelMatrix matrix;
+	//this is a reference to the JScrollPane that the results of a query are added to...we need
+	//to keep track of it so that we can update it.
+	private JScrollPane scrollPane;
+	
+	//this is what does the argument parsing...it maps the JTextFields and whatnot to their intended
+	//purpose as an argument for the QueryManager (or else we have to sift through every component
+	//attached to the GUI...including the JScrollPane and JPanels and stuff...worth the extra memory
+	private HashMap<Component, String> componentMap;
+	
+	//These actually are very important. The masterPanel is the overall panel that sits just under the
+	//frame. It is responsible for splitting the frame in half between querying and results.
+	
+	//scrollPanePanel is VERY important, it is the framework that OutputTuple instances (fance buttons)
+	//are stored in the JScrollPane.
+	private JPanel masterPanel, scrollPanePanel;
+	
+	//we need a method to place components in different locations and whatnot in a frame or component (panel, ...)
+	//this is done via a GridBagConstraints seeing as the layout of the components must be set out using either
+	//GridLayout or GridBagLayout.
+	//
+	//Helpful tidbit is that in a GridLayout, all components are equally sized and distributed throughout the
+	//component that is containing it. This is why buttons and stuff resize to cover ALL the space the component
+	//has. GridBagLayout on the other hand does not do this...it allows elements to be of different size, so USE IT
+	//whenever you can.
+	private GridBagConstraints constraints;
+	
+	//the titles for the output attributes
+	private String titles[] = {"Dish Name", "Rest. Name", "Rest. Address", "Price", "Avg. Rating"};
+	
+	//the maximum number of characters an output attribute can have
+	private int maxValueLengths[] = { 30, 30, 50, 10, 4 };
+	
+	//this maps string values to their IDs and full names. We need this because we cannot search for an ID given
+	//a name, it is not a primary key, and secondly the way formatting works is that if the attribute is longer than
+	//its maxValueLength, it is cutoff after those many characters. So we may not even have a full name to work with
+	//in the first place.
+	private HashMap<String, Pair<String,Integer> > abbreviatedResultMap;
+	
 	
 	public SearchWindow(CraveGUI gui) {
 		crave = gui;
@@ -30,6 +59,8 @@ public class SearchWindow extends JFrame implements ActionListener {
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		this.componentMap = new HashMap<Component, String>(4);
+		
+		this.abbreviatedResultMap = new HashMap<String, Pair<String, Integer> >();
 		
 		addComponentsToPane();
 		setSize(700,300);
@@ -47,10 +78,6 @@ public class SearchWindow extends JFrame implements ActionListener {
 	
 	private void setComponentMap(HashMap<Component, String> map) { this.componentMap = map; }
 	
-	public JPanel getMasterPanel() { return this.masterButtonPanel; }
-	
-	private void setMasterPanel(JPanel p) { this.masterButtonPanel = p; }
-	
 	public GridBagConstraints getConstraints() { return this.constraints; }
 	
 	private void setConstraints(GridBagConstraints g) { this.constraints = g; }
@@ -63,16 +90,10 @@ public class SearchWindow extends JFrame implements ActionListener {
 		String[] originsVals = {"Any", "American", "Asian", "Italian", "Tex-Mex"};
 		String[] orderByVals = {"Price", "Rating"};
 		
-		/* Create the components of the search window */
-//		JTextArea results = new JTextArea();
-//		results.setEditable(false);
-//		this.resultText = results;
 		
-		this.masterButtonPanel = new JPanel(new GridLayout(2, 5));
 		this.constraints = new GridBagConstraints();
 		this.constraints.fill = GridBagConstraints.HORIZONTAL;
 		this.constraints.anchor = GridBagConstraints.LINE_START;
-		resetResults();
 		
         JTextField dishText = new JTextField(15);
         this.getComponentMap().put(dishText, "Dish Name");
@@ -149,9 +170,10 @@ public class SearchWindow extends JFrame implements ActionListener {
         leftPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         
         
-//        this.scrollPane = new JScrollPane(results);
-        this.scrollPane = new JScrollPane();
-//        JScrollPane resultPane = new JScrollPane(this.getMasterPanel());
+        //create the scrollPane and its associated panel
+        this.scrollPanePanel = new JPanel(new GridBagLayout());
+        this.scrollPanePanel.setBackground(Color.WHITE);
+        this.scrollPane = new JScrollPane(this.scrollPanePanel);
         this.scrollPane.setBackground(Color.WHITE);
         this.scrollPane.setBorder(
                 BorderFactory.createCompoundBorder(
@@ -162,7 +184,9 @@ public class SearchWindow extends JFrame implements ActionListener {
         this.scrollPane.getHorizontalScrollBar().setUnitIncrement(16);
         System.out.println("SIZE: " + this.getSize().getWidth() + ", " + this.getSize().getHeight());
         this.scrollPane.setSize(700, 300);
-//        resultPane.add(this.getMasterPanel());
+        
+        //initialize empty query
+        resetResults();
         this.scrollPane.setVisible(true);
         
         /* Add components to panels */
@@ -191,7 +215,6 @@ public class SearchWindow extends JFrame implements ActionListener {
         /* Add the panels to the top-level content pane */
         Container pane = getContentPane();		//Outermost frame's c-pane
         this.masterPanel = new JPanel(new GridLayout(1, 2));
-//        pane.setLayout(new BoxLayout(pane, BoxLayout.X_AXIS));
         this.masterPanel.add(leftPanel, "West");
         this.masterPanel.add(this.scrollPane, "East");
         pane.add(this.masterPanel, "Center");
@@ -283,7 +306,13 @@ public class SearchWindow extends JFrame implements ActionListener {
 	{
 		try
 		{
-			resetResults();
+			
+			//we need to reset this....this is why we kept track of it using a global variable
+			//(we need to call resetResults() and have modify to this panel)
+			this.scrollPanePanel = new JPanel(new GridBagLayout());
+			this.scrollPanePanel.setBackground(Color.WHITE);
+			
+			this.resetResults();
 			
 			//this contains useful information like the number of columns per tuple...things like that
 			ResultSetMetaData metaData = set.getMetaData();
@@ -291,49 +320,112 @@ public class SearchWindow extends JFrame implements ActionListener {
 			System.out.println("Number of columns: " + metaData.getColumnCount());
 			int count = 0;
 			
-			this.matrix = new LabelMatrix(metaData.getColumnCount());
-			
 			String value = null;
 			
-			JLabel label = null;
+			//this is a fancy button..represents one output tuple....worry about formatting
+			OutputTuple t = null;
+			
+			//this is an output attribute used to append spaces for formatting
+			StringBuilder builder = new StringBuilder();
+			
+			//since we only have 5 output attributes we want and 7 output attributes from the query
+			//(we also get dishID and restaurantID), we need to keep track of an index in the maxValueLength
+			//array so we can format the given attribute
+			int k = 0;
+			
 			//iterate over every tuple
 			while(set.next())
 			{
+				
+				//this is how we place a button....we set the location in the GridBagConstraints and
+				//then will add the button to the scrollPanePanel using the constraints.
+				this.constraints.gridy = count + 2;
+				
+				t = new OutputTuple(metaData.getColumnCount());
+				
 				//iterate over every column in the tuple
 				for(int i = 1; i <= metaData.getColumnCount(); i++)
 				{
 					
-					//append column of tuple to field
-					
-					value = set.getString(i);
-//					if(value.length() > this.maxValueLengths[i - 1])
-//					{
-////						resultText.append(value.substring(0, this.maxValueLengths[i - 1]));
-//					}
-//					else
-//					{
-////						resultText.append(value);
-//					}
-					label = new JLabel(value);
-					label.setPreferredSize(label.getSize());
-					this.matrix.add(count, i - 1, label);
-					
-//					if(i < metaData.getColumnCount()) { resultText.append("\t"); }
-					
-					//worry about clickable things later
+					//i == 2 and i == 4 represent (dishID and restaurantID) respectively..skip these iterations
+					if(i != 2 && i != 4)
+					{
+						
+						//get the output attribute
+						value = set.getString(i);
+						
+						//we need to adjust k so that it contains the correct index in the maxValueLength array
+						if(i > 4) { k = i - 2; }
+						else if(i > 2) { k = i - 1; }
+						else { k = i; }
+						
+						//if there are too many characters in the output attribute we need to cut it off
+						if(value.length() > this.maxValueLengths[k - 1])
+						{
+
+							builder.append(value.substring(0, this.maxValueLengths[k - 1]));
+							
+							//its ok though if we cut short an attribute we care about (dishName or restaurantName)
+							//because we have the map to save us
+							if(i == 1 || i == 3)
+							{
+								this.abbreviatedResultMap.put(value.substring(0, this.maxValueLengths[k - 1]), 
+										new Pair<String, Integer>(value, Integer.parseInt(set.getString(i + 1))));
+							}
+						}
+						else //the string isnt too long so append the whole thing
+						{
+							
+							builder.append(value);
+							
+							//we need to pad with spaces for formatting...play with this
+							for(int j = 0; j < this.maxValueLengths[k - 1] - value.length(); j++)
+							{
+								builder.append(" ");
+							}
+							
+							//we still need to save the attributes and for the sake of abstracting away the process
+							//of fetching the information for a resultWindow
+							if(i == 1 || i == 3)
+							{
+								this.abbreviatedResultMap.put(value, new Pair<String, Integer>(value, Integer.parseInt(set.getString(i + 1))));
+							}
+						}
+						
+						//add the formatted attribute to the fancy button
+						t.addLabel(builder.toString());
+						builder = new StringBuilder();
+					}
 				}
-//				resultText.append("\n");
+
+				//this actually makes the outputtuple ready to go
+				t.finalizeTuple(true);
+				
+				//make the buttons actually do something...open a resaurantWindow with info
+				//from the map
+				t.addActionListener(new ActionListener(){
+					@Override
+					public void actionPerformed(ActionEvent e)
+					{
+						Pair<String, Integer> r = SearchWindow.this.abbreviatedResultMap.get(((OutputTuple)e.getSource()).getLabels().get(2).trim());
+						Pair<String, Integer> d = SearchWindow.this.abbreviatedResultMap.get(((OutputTuple)e.getSource()).getLabels().get(0).trim());
+						new RestaurantWindow(SearchWindow.this.crave, r.getVal2(), d.getVal1());
+					}
+				});
+				
+				//add the button at the specified location from constraints
+				this.scrollPanePanel.add(t, this.constraints);
+				
 				count++;
 			}
-			
-			if (count == 0) {
-//				resultText.append("No results found. Try expanding your search.");
-//				resultText.append("\n");
-			}
-			
-			//make sure window is legal and repaint
+						
+			//remove the current scrollpane
 			this.masterPanel.remove(this.scrollPane);
-			this.scrollPane = new JScrollPane(this.matrix.addToTextPane(this.titles));
+			
+			//we NEED to remove and add the scrollpane because we need to specify the component the 
+			//scrollPane focuses on through the constructor
+			this.scrollPane = new JScrollPane(this.scrollPanePanel);
+			this.scrollPane.setBackground(Color.WHITE);
 			this.scrollPane.setPreferredSize(new Dimension(700, 300));
 			this.masterPanel.add(this.scrollPane, "East");
 			
@@ -351,26 +443,34 @@ public class SearchWindow extends JFrame implements ActionListener {
 	
 	private void resetResults()
 	{
-//		for(int i = 0; i < 5; i++)
-//		{
-//			this.getConstraints().gridx = i;
-//			this.getConstraints().gridy = 0;
-//			this.getMasterPanel().add(new JLabel(this.titles[i]));
-//		}
-//		
-//		for(int i = 0; i < 5; i++)
-//		{
-//			this.getConstraints().gridx = i;
-//			this.getConstraints().gridy = 1;
-//			this.getMasterPanel().add(new JLabel("--------------------"));
-//		}
 		
+		OutputTuple t = new OutputTuple(5);
+		StringBuilder b = new StringBuilder();
 		
+		//add the titles to the first button and pad with spaces
+		for(int i = 0; i < 5; i++)
+		{
+			b.append(this.titles[i]);
+			for(int j = 0; j < this.maxValueLengths[i] - this.titles[i].length(); j++)
+			{
+				b.append(" ");
+			}
+			t.addLabel(b.toString());
+			b = new StringBuilder();
+		}
 		
-//		resultText.setText(null);
-//		resultText.append("dish name \t\t rest. name \t rest. address \t\t price \t avg rating\n");
-//		resultText.append("------------------------------------------------------------------------" +
-//				"----------------------------------------------------------\n");
+		//add to scrollPane
+		t.finalizeTuple(false);
+		this.constraints.gridy = 0;
+		this.scrollPanePanel.add(t, this.constraints);
+		
+		//add the layer of ------------------s
+		t = new OutputTuple(5);
+		for(int i = 0; i < 700; i++) { b.append("-"); }
+		t.addLabel(b.toString());
+		t.finalizeTuple(false);
+		this.constraints.gridy = 1;
+		this.scrollPanePanel.add(t, this.constraints);
 	}
 	
 }

@@ -1,4 +1,4 @@
-SELECT 	d.name, r.name, r.address, serv.price, d.avgRating
+SELECT 	d.name, d.ID, r.name, r.ID, r.address, serv.price, d.avgRating
 FROM   	dishes as d, restaurants as r, serves as serv, origins as o, types as t, dishOrigin as do, dishType as dt
 WHERE  	(serv.rID, serv.dID) = (r.ID, d.ID)
 	AND (d.ID, d.ID) = (do.dID, dt.dID)
