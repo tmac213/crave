@@ -25,4 +25,10 @@ public class Pair<T,V> extends Object {
 		return "(" + this.getVal1() + ", " + this.getVal2() + ")";
 	}
 	
+	@Override
+	public int hashCode()
+	{
+		return this.getVal1().hashCode() * this.getVal1().hashCode() + this.getVal2().hashCode();
+	}
+	
 }
