@@ -19,7 +19,6 @@ public class RestaurantWindow extends JFrame implements ActionListener {
     private String restaurantName, restaurantAddress;
     private JLabel titleLabel;
     private JLabel addressLabel;
-    private JLabel nameLabel;
     private JLabel priceLabel;
     private JLabel descriptionLabel;
     private final JLabel ratingLabel = new JLabel("Rate this dish:");
@@ -54,10 +53,10 @@ public class RestaurantWindow extends JFrame implements ActionListener {
 
             resultSet = statement.executeQuery(String.format("select d.name, s.price, s.description, d.avgRating, d.ID " +
                                                             "from dishes d, serves s " +
-                                                            "where (s.dID, s.rID) = (d.ID, %s);"));
+                                                            "where (s.dID, s.rID) = (d.ID, %s);", restaurantID));
             while (resultSet.next()) {
                 String name = resultSet.getString(1);
-                String price = Double.toString(resultSet.getDouble(2));
+                Float price = (float)resultSet.getDouble(2);
                 String description = resultSet.getString(3);
                 Double rating = resultSet.getDouble(4);
                 Integer ID = resultSet.getInt(5);
@@ -65,7 +64,7 @@ public class RestaurantWindow extends JFrame implements ActionListener {
                 if (description == null) {
                     description = "Description not available.";
                 }
-                nameToInfo.put(name, new Pair<String, String>(price, description));
+                nameToInfo.put(name, new Pair<String, String>(formatDecimal(price), description));
                 nameToRatingAndID.put(name, new Pair<Double, Integer>(rating, ID));
             }
 
@@ -97,8 +96,10 @@ public class RestaurantWindow extends JFrame implements ActionListener {
         titleLabel = new JLabel(restaurantName);
         addressLabel = new JLabel(restaurantAddress);
 
-        nameLabel = new JLabel(defaultDishName);
+
+        JLabel priceLabelLeft = new JLabel("Price:");
         priceLabel = new JLabel(nameToInfo.get(defaultDishName).getVal1());
+        JLabel descriptionLabelLeft = new JLabel("Description:");
         descriptionLabel = new JLabel(nameToInfo.get(defaultDishName).getVal2());
 
 
@@ -106,56 +107,100 @@ public class RestaurantWindow extends JFrame implements ActionListener {
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         addressLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        priceLabelLeft.setLabelFor(priceLabel);
+        descriptionLabelLeft.setLabelFor(descriptionLabel);
         ratingLabel.setLabelFor(rating);
 
         // label borders
         titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        addressLabel.setBorder(BorderFactory.createEmptyBorder());
+        addressLabel.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+        priceLabelLeft.setBorder(BorderFactory.createEmptyBorder(50,0,0,50));
+        descriptionLabelLeft.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+        priceLabel.setBorder(BorderFactory.createEmptyBorder(50,0,0,0));
+        descriptionLabel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
 
         // Adjust combo boxes
         dishes.setBorder(BorderFactory.createEmptyBorder(25, 0, 0, 0));
-        rating.setBorder(BorderFactory.createEmptyBorder());
+        rating.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 
         // create panels
         titlePanel = new JPanel();
-        titleLabel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
-        titlePanel.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
+        titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
+        titlePanel.setBorder(BorderFactory.createEmptyBorder(25,50,25,50));
 
         infoPanel = new JPanel();
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
-        infoPanel.setBorder(BorderFactory.createEmptyBorder());
+        infoPanel.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+
+        JPanel infoPanelLeft = new JPanel();
+        infoPanelLeft.setLayout(new BoxLayout(infoPanelLeft, BoxLayout.Y_AXIS));
+        infoPanelLeft.setBorder(BorderFactory.createEmptyBorder(0,0,0,75));
+
+        JPanel infoPanelOuter = new JPanel();
+        infoPanelOuter.setLayout(new BoxLayout(infoPanelOuter, BoxLayout.X_AXIS));
+        infoPanelOuter.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 
         ratingPanel = new JPanel();
-        ratingPanel.setLayout(new BoxLayout(ratingPanel, BoxLayout.X_AXIS));
-        ratingPanel.setBorder(BorderFactory.createEmptyBorder());
+        ratingPanel.setLayout(new BoxLayout(ratingPanel, BoxLayout.Y_AXIS));
+        ratingPanel.setBorder(BorderFactory.createEmptyBorder(50,50,50,0));
 
+        JPanel dishesPanel = new JPanel();
+        dishesPanel.setLayout(new BoxLayout(dishesPanel, BoxLayout.Y_AXIS));
+        dishesPanel.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+
+        JPanel ratingPanelInner = new JPanel();
+        ratingPanelInner.setLayout(new BoxLayout(ratingPanelInner, BoxLayout.Y_AXIS));
+        ratingPanelInner.setBorder(BorderFactory.createEmptyBorder(50,50,50,50));
+
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 
 
         titlePanel.add(titleLabel);
         titlePanel.add(addressLabel);
-        titleLabel.add(dishes);
 
-        infoPanel.add(nameLabel);
+        dishesPanel.add(dishes);
+
         infoPanel.add(priceLabel);
         infoPanel.add(descriptionLabel);
 
+        infoPanelLeft.add(priceLabelLeft);
+        infoPanelLeft.add(descriptionLabelLeft);
+
+        infoPanelOuter.add(infoPanelLeft);
+        infoPanelOuter.add(infoPanel);
+
         ratingPanel.add(ratingLabel);
-        ratingPanel.add(rating);
+
+        ratingPanelInner.add(rating);
+
+        bottomPanel.add(ratingPanel);
+        bottomPanel.add(ratingPanelInner);
 
         Container pane = getContentPane();
-        pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
+        pane.setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
         pane.add(titlePanel);
-        pane.add(infoPanel);
-        pane.add(ratingPanel);
+        pane.add(dishesPanel);
+        pane.add(infoPanelOuter);
+        pane.add(bottomPanel);
 
-        setSize(500, 300);
+        setSize(500, 500);
         pack();
         crave.centerFrame(this);
         this.setVisible(true);
     }
 
+    public String formatDecimal(float number) {
+        float epsilon = 0.004f; // 4 tenths of a cent
+        if (Math.abs(Math.round(number) - number) < epsilon) {
+            return String.format("$%10.0f", number); // sdb
+        } else {
+            return String.format("$%10.2f", number); // dj_segfault
+        }
+    }
+
     private void updateLabels(String dishName) {
-        nameLabel.setText(dishName);
         priceLabel.setText(nameToInfo.get(dishName).getVal1());
         descriptionLabel.setText(nameToInfo.get(dishName).getVal2());
         revalidate();
@@ -164,7 +209,7 @@ public class RestaurantWindow extends JFrame implements ActionListener {
     }
 
     private void insertRating(Integer rating, String dishName) {
-        System.out.printf("Checking for rating for user %s\n", crave.getCurrentUser());
+        System.out.printf("Inserting rating for user %s\n", crave.getCurrentUser());
         Statement statement = null;
         ResultSet resultSet = null;
         int result = -1;
@@ -173,7 +218,7 @@ public class RestaurantWindow extends JFrame implements ActionListener {
             statement.executeUpdate(String.format("insert into reviews(rID, uID, dID, rating) " +
                             "values (%d, %d, %d, %d) " +
                             "on duplicate key update " +
-                            "rating = values (%d);",
+                            "rating = %d;",
                     restaurantID,
                     crave.dbAccess.getCurrentUserID(),
                     nameToRatingAndID.get(dishName).getVal2(),
