@@ -13,13 +13,16 @@ import javax.swing.*;
 public class SearchWindow extends JFrame implements ActionListener {
 	
 	public CraveGUI crave;
-	private JTextArea resultText;
+//	private JTextArea resultText;
 	private JScrollPane scrollPane;
 	private HashMap<Component, String> componentMap;
-	private JPanel masterButtonPanel;
+	private JPanel masterButtonPanel, masterPanel;
 	private GridBagConstraints constraints;
 	private String titles[] = {"Dish Name", "Rest. Name", "Rest. Address", "Price", "Avg. Rating"};
-	private int maxValueLengths[] = { 15, 15, 20, 6, 4 };
+	private int maxValueLengths[] = { 20, 13, 20, 6, 4 };
+	private HashMap<String, String> abbreviatedResultMap;
+	
+	private LabelMatrix matrix;
 	
 	public SearchWindow(CraveGUI gui) {
 		crave = gui;
@@ -56,14 +59,14 @@ public class SearchWindow extends JFrame implements ActionListener {
 	 * Adds labels, text fields, buttons, panels to frame.
 	 */
 	private void addComponentsToPane() {
-		String[] typeVals = {"None", "Any", "Burger", "Pizza", "Noodles", "Sushi"};
-		String[] originsVals = {"None", "Any", "Italian", "Chinese", "American", "Thai", "Indian"};
+		String[] typeVals = {"Any", "Appetizers", "Burrito", "Pizza", "Meat & Seafood", "Noodles & Rice", "Sandwiches", "Vegetables"};
+		String[] originsVals = {"Any", "American", "Asian", "Italian", "Tex-Mex"};
 		String[] orderByVals = {"Price", "Rating"};
 		
 		/* Create the components of the search window */
-		JTextArea results = new JTextArea();
-		results.setEditable(false);
-		this.resultText = results;
+//		JTextArea results = new JTextArea();
+//		results.setEditable(false);
+//		this.resultText = results;
 		
 		this.masterButtonPanel = new JPanel(new GridLayout(2, 5));
 		this.constraints = new GridBagConstraints();
@@ -146,19 +149,21 @@ public class SearchWindow extends JFrame implements ActionListener {
         leftPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         
         
-        JScrollPane resultPane = new JScrollPane(results);
+//        this.scrollPane = new JScrollPane(results);
+        this.scrollPane = new JScrollPane();
 //        JScrollPane resultPane = new JScrollPane(this.getMasterPanel());
-        resultPane.setBackground(Color.WHITE);
-        resultPane.setBorder(
+        this.scrollPane.setBackground(Color.WHITE);
+        this.scrollPane.setBorder(
                 BorderFactory.createCompoundBorder(
                         BorderFactory.createTitledBorder("Search Result(s)"),
                         BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 
-        resultPane.getVerticalScrollBar().setUnitIncrement(16);
-        resultPane.getHorizontalScrollBar().setUnitIncrement(16);
-        resultPane.setSize(this.getSize());
+        this.scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        this.scrollPane.getHorizontalScrollBar().setUnitIncrement(16);
+        System.out.println("SIZE: " + this.getSize().getWidth() + ", " + this.getSize().getHeight());
+        this.scrollPane.setSize(700, 300);
 //        resultPane.add(this.getMasterPanel());
-        resultPane.setVisible(true);
+        this.scrollPane.setVisible(true);
         
         /* Add components to panels */
         titlePanel.add(titleLabel);
@@ -185,9 +190,13 @@ public class SearchWindow extends JFrame implements ActionListener {
         
         /* Add the panels to the top-level content pane */
         Container pane = getContentPane();		//Outermost frame's c-pane
-        pane.setLayout(new BoxLayout(pane, BoxLayout.X_AXIS));
-        pane.add(leftPanel);
-        pane.add(resultPane);
+        this.masterPanel = new JPanel(new GridLayout(1, 2));
+//        pane.setLayout(new BoxLayout(pane, BoxLayout.X_AXIS));
+        this.masterPanel.add(leftPanel, "West");
+        this.masterPanel.add(this.scrollPane, "East");
+        pane.add(this.masterPanel, "Center");
+        
+        System.out.println("SIZE: " + leftPanel.getSize().getWidth() + ", " + leftPanel.getSize().getHeight());
     }
 	
 	@Override
@@ -282,7 +291,11 @@ public class SearchWindow extends JFrame implements ActionListener {
 			System.out.println("Number of columns: " + metaData.getColumnCount());
 			int count = 0;
 			
+			this.matrix = new LabelMatrix(metaData.getColumnCount());
+			
 			String value = null;
+			
+			JLabel label = null;
 			//iterate over every tuple
 			while(set.next())
 			{
@@ -293,29 +306,38 @@ public class SearchWindow extends JFrame implements ActionListener {
 					//append column of tuple to field
 					
 					value = set.getString(i);
-					if(value.length() > this.maxValueLengths[i - 1])
-					{
-						resultText.append(value.substring(0, this.maxValueLengths[i - 1]));
-					}
-					else
-					{
-						resultText.append(value);
-					}
+//					if(value.length() > this.maxValueLengths[i - 1])
+//					{
+////						resultText.append(value.substring(0, this.maxValueLengths[i - 1]));
+//					}
+//					else
+//					{
+////						resultText.append(value);
+//					}
+					label = new JLabel(value);
+					label.setPreferredSize(label.getSize());
+					this.matrix.add(count, i - 1, label);
 					
-					if(i < metaData.getColumnCount()) { resultText.append("\t"); }
+//					if(i < metaData.getColumnCount()) { resultText.append("\t"); }
 					
 					//worry about clickable things later
 				}
-				resultText.append("\n");
+//				resultText.append("\n");
 				count++;
 			}
 			
 			if (count == 0) {
-				resultText.append("No results found. Try expanding your search.");
-				resultText.append("\n");
+//				resultText.append("No results found. Try expanding your search.");
+//				resultText.append("\n");
 			}
 			
 			//make sure window is legal and repaint
+			this.masterPanel.remove(this.scrollPane);
+			this.scrollPane = new JScrollPane(this.matrix.addToTextPane(this.titles));
+			this.scrollPane.setPreferredSize(new Dimension(700, 300));
+			this.masterPanel.add(this.scrollPane, "East");
+			
+			this.setPreferredSize(this.getSize());
 			this.revalidate();
 			this.repaint();
 			this.pack();
@@ -333,22 +355,22 @@ public class SearchWindow extends JFrame implements ActionListener {
 //		{
 //			this.getConstraints().gridx = i;
 //			this.getConstraints().gridy = 0;
-//			this.getMasterPanel().add(new JButton(this.titles[i]));
+//			this.getMasterPanel().add(new JLabel(this.titles[i]));
 //		}
 //		
 //		for(int i = 0; i < 5; i++)
 //		{
 //			this.getConstraints().gridx = i;
 //			this.getConstraints().gridy = 1;
-//			this.getMasterPanel().add(new JButton("--------------------"));
+//			this.getMasterPanel().add(new JLabel("--------------------"));
 //		}
 		
 		
 		
-		resultText.setText(null);
-		resultText.append("dish name \t rest. name \t rest. address \t\t price \t avg rating\n");
-		resultText.append("------------------------------------------------------------------------" +
-				"----------------------------------------------------------\n");
+//		resultText.setText(null);
+//		resultText.append("dish name \t\t rest. name \t rest. address \t\t price \t avg rating\n");
+//		resultText.append("------------------------------------------------------------------------" +
+//				"----------------------------------------------------------\n");
 	}
 	
 }
