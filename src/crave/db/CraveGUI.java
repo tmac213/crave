@@ -49,7 +49,11 @@ public class CraveGUI {
     	//db.cleanup(conn);
     	
 	}
-	
+
+    public String getCurrentUser() {
+        return currentUser;
+    }
+
 	public void showLogin() {
 		new LoginWindow(this);
 	}
