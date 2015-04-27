@@ -19,8 +19,17 @@ public class DBAccess {
 
 	/** The name of the database */
 	private final String dbName = "restaurantsApp";
-	
-	/**
+    private int userID;
+
+    public int getCurrentUserID() {
+        return userID;
+    }
+
+    private void setCurrentUserID(int userID) {
+        this.userID = userID;
+    }
+
+    /**
 	 * Get a new database connection
 	 * @return A connection to the database
 	 * @throws SQLException
@@ -85,18 +94,33 @@ public class DBAccess {
         int result = -1;
         try {
             statement = conn.createStatement();
-            resultSet = statement.executeQuery(String.format("select count(*) from users where username = \"%s\";", username));
+            resultSet = statement.executeQuery(String.format("select count(*), ID" +
+                                                            "from users" +
+                                                            "where username = \"%s\"" +
+                                                            "group by ID;", username));
             if (resultSet.next()) {
                 result = resultSet.getInt(1);
+                setCurrentUserID(resultSet.getInt(2));
             }
         } catch (SQLException e) {
             System.err.println("ERROR: Could not check username");
             e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            } catch (SQLException e) {}
         }
         return result > 0;
     }
-	
-	/** Executes a general query using the query generator and returns the result set */
+
+
+
+    /** Executes a general query using the query generator and returns the result set */
 	public Pair<ResultSet, Statement> generalQuery(Connection conn, String argString, QueryManager manager) {
 		System.out.println("Querying database...");
 		Statement stmt = null;
