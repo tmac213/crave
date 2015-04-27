@@ -14,7 +14,12 @@ public class SearchWindow extends JFrame implements ActionListener {
 	
 	public CraveGUI crave;
 	private JTextArea resultText;
-	HashMap<Component, String> componentMap;
+	private JScrollPane scrollPane;
+	private HashMap<Component, String> componentMap;
+	private JPanel masterButtonPanel;
+	private GridBagConstraints constraints;
+	private String titles[] = {"Dish Name", "Rest. Name", "Rest. Address", "Price", "Avg. Rating"};
+	private int maxValueLengths[] = { 15, 15, 20, 6, 4 };
 	
 	public SearchWindow(CraveGUI gui) {
 		crave = gui;
@@ -31,6 +36,22 @@ public class SearchWindow extends JFrame implements ActionListener {
 		setVisible(true);
 	}
 	
+	public JScrollPane getScrollPane() { return this.scrollPane; }
+	
+	private void setScrollPane(JScrollPane p) { this.scrollPane = p; }
+	
+	public HashMap<Component, String> getComponentMap() { return this.componentMap; }
+	
+	private void setComponentMap(HashMap<Component, String> map) { this.componentMap = map; }
+	
+	public JPanel getMasterPanel() { return this.masterButtonPanel; }
+	
+	private void setMasterPanel(JPanel p) { this.masterButtonPanel = p; }
+	
+	public GridBagConstraints getConstraints() { return this.constraints; }
+	
+	private void setConstraints(GridBagConstraints g) { this.constraints = g; }
+	
 	/**
 	 * Adds labels, text fields, buttons, panels to frame.
 	 */
@@ -43,6 +64,11 @@ public class SearchWindow extends JFrame implements ActionListener {
 		JTextArea results = new JTextArea();
 		results.setEditable(false);
 		this.resultText = results;
+		
+		this.masterButtonPanel = new JPanel(new GridLayout(2, 5));
+		this.constraints = new GridBagConstraints();
+		this.constraints.fill = GridBagConstraints.HORIZONTAL;
+		this.constraints.anchor = GridBagConstraints.LINE_START;
 		resetResults();
 		
         JTextField dishText = new JTextField(15);
@@ -119,7 +145,10 @@ public class SearchWindow extends JFrame implements ActionListener {
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         leftPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         
+        
         JScrollPane resultPane = new JScrollPane(results);
+//        JScrollPane resultPane = new JScrollPane(this.getMasterPanel());
+        resultPane.setBackground(Color.WHITE);
         resultPane.setBorder(
                 BorderFactory.createCompoundBorder(
                         BorderFactory.createTitledBorder("Search Result(s)"),
@@ -128,6 +157,7 @@ public class SearchWindow extends JFrame implements ActionListener {
         resultPane.getVerticalScrollBar().setUnitIncrement(16);
         resultPane.getHorizontalScrollBar().setUnitIncrement(16);
         resultPane.setSize(this.getSize());
+//        resultPane.add(this.getMasterPanel());
         resultPane.setVisible(true);
         
         /* Add components to panels */
@@ -159,8 +189,6 @@ public class SearchWindow extends JFrame implements ActionListener {
         pane.add(leftPanel);
         pane.add(resultPane);
     }
-
-	private HashMap<Component, String> getComponentMap() { return this.componentMap; }
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -253,6 +281,8 @@ public class SearchWindow extends JFrame implements ActionListener {
 			
 			System.out.println("Number of columns: " + metaData.getColumnCount());
 			int count = 0;
+			
+			String value = null;
 			//iterate over every tuple
 			while(set.next())
 			{
@@ -261,7 +291,16 @@ public class SearchWindow extends JFrame implements ActionListener {
 				{
 					
 					//append column of tuple to field
-					resultText.append(set.getString(i));
+					
+					value = set.getString(i);
+					if(value.length() > this.maxValueLengths[i - 1])
+					{
+						resultText.append(value.substring(0, this.maxValueLengths[i - 1]));
+					}
+					else
+					{
+						resultText.append(value);
+					}
 					
 					if(i < metaData.getColumnCount()) { resultText.append("\t"); }
 					
@@ -288,9 +327,26 @@ public class SearchWindow extends JFrame implements ActionListener {
 		}
 	}
 	
-	private void resetResults() {
+	private void resetResults()
+	{
+//		for(int i = 0; i < 5; i++)
+//		{
+//			this.getConstraints().gridx = i;
+//			this.getConstraints().gridy = 0;
+//			this.getMasterPanel().add(new JButton(this.titles[i]));
+//		}
+//		
+//		for(int i = 0; i < 5; i++)
+//		{
+//			this.getConstraints().gridx = i;
+//			this.getConstraints().gridy = 1;
+//			this.getMasterPanel().add(new JButton("--------------------"));
+//		}
+		
+		
+		
 		resultText.setText(null);
-		resultText.append("dish name \t rest. name \t rest. address \t price \t avg rating\n");
+		resultText.append("dish name \t rest. name \t rest. address \t\t price \t avg rating\n");
 		resultText.append("------------------------------------------------------------------------" +
 				"----------------------------------------------------------\n");
 	}
