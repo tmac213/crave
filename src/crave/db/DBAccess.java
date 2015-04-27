@@ -94,9 +94,9 @@ public class DBAccess {
         int result = -1;
         try {
             statement = conn.createStatement();
-            resultSet = statement.executeQuery(String.format("select count(*), ID" +
-                                                            "from users" +
-                                                            "where username = \"%s\"" +
+            resultSet = statement.executeQuery(String.format("select count(*), ID " +
+                                                            "from users " +
+                                                            "where username = \"%s\" " +
                                                             "group by ID;", username));
             if (resultSet.next()) {
                 result = resultSet.getInt(1);

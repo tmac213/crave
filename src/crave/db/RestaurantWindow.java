@@ -52,8 +52,8 @@ public class RestaurantWindow extends JFrame implements ActionListener {
 
             resultSet.close();
 
-            resultSet = statement.executeQuery(String.format("select d.name, s.price, s.description, d.avgRating, d.ID" +
-                                                            "from dishes d, serves s" +
+            resultSet = statement.executeQuery(String.format("select d.name, s.price, s.description, d.avgRating, d.ID " +
+                                                            "from dishes d, serves s " +
                                                             "where (s.dID, s.rID) = (d.ID, %s);"));
             while (resultSet.next()) {
                 String name = resultSet.getString(1);
@@ -170,9 +170,9 @@ public class RestaurantWindow extends JFrame implements ActionListener {
         int result = -1;
         try {
             statement = crave.conn.createStatement();
-            statement.executeUpdate(String.format("insert into reviews(rID, uID, dID, rating)" +
-                            "values (%d, %d, %d, %d)" +
-                            "on duplicate key update" +
+            statement.executeUpdate(String.format("insert into reviews(rID, uID, dID, rating) " +
+                            "values (%d, %d, %d, %d) " +
+                            "on duplicate key update " +
                             "rating = values (%d);",
                     restaurantID,
                     crave.dbAccess.getCurrentUserID(),
