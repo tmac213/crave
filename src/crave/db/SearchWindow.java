@@ -407,7 +407,9 @@ public class SearchWindow extends JFrame implements ActionListener {
 					@Override
 					public void actionPerformed(ActionEvent e)
 					{
-						Pair<String, Integer> r = SearchWindow.this.abbreviatedResultMap.get(((OutputTuple)e.getSource()).getLabels().get(2).trim());
+						System.out.println(((OutputTuple)e.getSource()).getLabels().get(1).trim());
+						System.out.println(((OutputTuple)e.getSource()).getLabels().get(0).trim());
+						Pair<String, Integer> r = SearchWindow.this.abbreviatedResultMap.get(((OutputTuple)e.getSource()).getLabels().get(1).trim());
 						Pair<String, Integer> d = SearchWindow.this.abbreviatedResultMap.get(((OutputTuple)e.getSource()).getLabels().get(0).trim());
 						new RestaurantWindow(SearchWindow.this.crave, r.getVal2(), d.getVal1());
 					}
