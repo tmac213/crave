@@ -137,9 +137,9 @@ public class SearchWindow extends JFrame implements ActionListener {
         dishText.setBorder(BorderFactory.createEmptyBorder(25, 25, 0, 25));
         
         /* Adjust combo boxes */
-        types.setBorder(BorderFactory.createEmptyBorder(50, 25, 0, 25));
-        origins.setBorder(BorderFactory.createEmptyBorder(50, 25, 0, 25));
-        orderBy.setBorder(BorderFactory.createEmptyBorder(50, 25, 0, 25));
+        types.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 25));
+        origins.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 25));
+        orderBy.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 25));
         
         /* Adjust button */
         search.addActionListener(this);			//set button responder to this window
@@ -258,7 +258,6 @@ public class SearchWindow extends JFrame implements ActionListener {
 		ResultSet rs = pair.getVal1();
 		
 		//update the result window with the query result.
-		//this.getResultWindow().update(rs);
 		update(rs);
 		
 		try { pair.getVal2().close(); }
@@ -385,7 +384,7 @@ public class SearchWindow extends JFrame implements ActionListener {
 							}
 							
 							//we still need to save the attributes and for the sake of abstracting away the process
-							//of fetching the information for a resultWindow
+							//of fetching the information for a result window
 							if(i == 1 || i == 3)
 							{
 								this.abbreviatedResultMap.put(value, new Pair<String, Integer>(value, Integer.parseInt(set.getString(i + 1))));
@@ -438,7 +437,7 @@ public class SearchWindow extends JFrame implements ActionListener {
 		}
 		catch(SQLException e)
 		{
-			System.err.println("Error updating ResultWindow with ResultSet");
+			System.err.println("Error updating result window with ResultSet");
 			e.printStackTrace();
 		}
 	}
