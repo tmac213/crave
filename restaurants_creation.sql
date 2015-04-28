@@ -1,3 +1,4 @@
+CREATE DATABASE IF NOT EXISTS restaurantsApp;
 USE restaurantsApp;
 
 DROP USER 'appUser'@'localhost';
